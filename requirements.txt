@@ -1,0 +1,6 @@
+# Only src/run_eval.py, src/train_*.py need these -- they drive a live TORCS.
+# controller.py, the test suite, make_figure.py and analyze_track.py are stdlib only.
+numpy>=1.24
+gym>=0.21          # required by the gym_torcs bridge
+torch>=2.1         # residual network (run_eval.py without --no-nn, train_nn_ars.py)
+cma>=3.2           # CMA-ES (train_cma_*.py)
