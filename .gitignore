@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Third-party checkout (see src/torcs_env.py)
+third_party/
+
+# Training run outputs
+runs/
+logs/
+models/
+*.pkl
+*.pt
+*.pth

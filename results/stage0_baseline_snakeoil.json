@@ -1,0 +1,19 @@
+{
+  "driver": "snakeoil",
+  "A": 25.0,
+  "B": 0.25,
+  "C": 50.0,
+  "dist": 10835.3,
+  "all_lap_times": [
+    {
+      "lap": 1,
+      "time_s": 264.594
+    },
+    {
+      "lap": 2,
+      "time_s": 261.422
+    }
+  ],
+  "best_lap_1_s": 264.594,
+  "best_lap_2plus_s": 261.422
+}

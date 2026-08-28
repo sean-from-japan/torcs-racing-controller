@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="500" viewBox="0 0 900 500" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<rect width="900" height="500" fill="#ffffff"/>
+<pattern id="unverified" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" fill="#c9d4e3"/><rect width="3" height="7" fill="#eef2f7"/></pattern>
+<text x="24" y="30" font-size="19" font-weight="600" fill="#11161d">Corkscrew best warm lap, by optimisation stage</text>
+<text x="24" y="52" font-size="13" fill="#5a6673">TORCS, ~3,608 m lap. Lower is better; lap 1 starts from rest and is not counted.</text>
+<text x="24" y="88" font-size="13.5" font-weight="600" fill="#11161d">Rule-based baseline</text>
+<text x="24" y="105" font-size="11.5" fill="#6b7684">supplied snakeoil driver</text>
+<rect x="330" y="76" width="500.0" height="22" rx="3" fill="#2f6fb5"/>
+<text x="839.0" y="92" font-size="13" font-weight="600" fill="#11161d">261.422 s</text>
+<text x="24" y="150" font-size="13.5" font-weight="600" fill="#11161d">CMA-ES, 3 params</text>
+<text x="24" y="167" font-size="11.5" fill="#6b7684">A, B, C</text>
+<rect x="330" y="138" width="273.7" height="22" rx="3" fill="#2f6fb5"/>
+<text x="612.7" y="154" font-size="13" font-weight="600" fill="#11161d">143.100 s</text>
+<text x="612.7" y="169" font-size="11.5" fill="#6b7684">-45.3% vs baseline</text>
+<text x="24" y="212" font-size="13.5" font-weight="600" fill="#11161d">CMA-ES, 5 params</text>
+<text x="24" y="229" font-size="11.5" fill="#6b7684">+ K, T</text>
+<rect x="330" y="200" width="237.4" height="22" rx="3" fill="#2f6fb5"/>
+<text x="576.4" y="216" font-size="13" font-weight="600" fill="#11161d">124.148 s</text>
+<text x="576.4" y="231" font-size="11.5" fill="#6b7684">-52.5% vs baseline</text>
+<text x="24" y="274" font-size="13.5" font-weight="600" fill="#11161d">CMA-ES, 6 params</text>
+<text x="24" y="291" font-size="11.5" fill="#6b7684">+ D (steering deadband)</text>
+<rect x="330" y="262" width="233.5" height="22" rx="3" fill="#2f6fb5"/>
+<text x="572.5" y="278" font-size="13" font-weight="600" fill="#11161d">122.060 s</text>
+<text x="572.5" y="293" font-size="11.5" fill="#6b7684">-53.3% vs baseline</text>
+<text x="24" y="336" font-size="13.5" font-weight="600" fill="#11161d">CMA-ES, 8 params + s35 cap</text>
+<text x="24" y="353" font-size="11.5" fill="#6b7684">+ K_final, switch_dist, C_s35</text>
+<rect x="330" y="324" width="207.9" height="22" rx="3" fill="#2f6fb5"/>
+<text x="546.9" y="340" font-size="13" font-weight="600" fill="#11161d">108.692 s</text>
+<text x="546.9" y="355" font-size="11.5" fill="#6b7684">-58.4% vs baseline</text>
+<text x="24" y="398" font-size="13.5" font-weight="600" fill="#11161d">Residual NN + ARS</text>
+<text x="24" y="415" font-size="11.5" fill="#6b7684">throttle + 0.2 x NN(obs)</text>
+<rect x="330" y="386" width="203.9" height="22" rx="3" fill="url(#unverified)"/>
+<rect x="330" y="386" width="203.9" height="22" rx="3" fill="none" stroke="#8fa3bb" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="542.9" y="402" font-size="13" font-weight="600" fill="#11161d">106.630 s</text>
+<text x="542.9" y="417" font-size="11.5" fill="#6b7684">-59.2% vs baseline</text>
+<text x="24" y="429" font-size="11" fill="#a2560d">trained weights not archived</text>
+<rect x="24" y="458" width="13" height="11" rx="2" fill="#2f6fb5"/>
+<text x="43" y="468" font-size="11.5" fill="#5a6673">parameters committed in results/</text>
+<rect x="264" y="458" width="13" height="11" rx="2" fill="url(#unverified)" stroke="#8fa3bb" stroke-width="1"/>
+<text x="283" y="468" font-size="11.5" fill="#5a6673">measured in the project; trained weights not archived</text>
+</svg>

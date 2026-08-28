@@ -1,0 +1,602 @@
+{
+  "track": "Corkscrew (Laguna Seca style)",
+  "xml_length_m": 3522.8,
+  "race_length_m": 3608.0,
+  "grid_offset_m": 85.2,
+  "segments": [
+    {
+      "name": "s1",
+      "type": "lft",
+      "length_m": 32.19,
+      "radius_m": 153.7,
+      "arc_deg": 12.0,
+      "dist_end_xml": 32.2,
+      "dist_end_race": 117.4
+    },
+    {
+      "name": "s2",
+      "type": "str",
+      "length_m": 151.8,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 184.0,
+      "dist_end_race": 269.2
+    },
+    {
+      "name": "s3",
+      "type": "lft",
+      "length_m": 37.74,
+      "radius_m": 86.5,
+      "arc_deg": 25.0,
+      "dist_end_xml": 221.7,
+      "dist_end_race": 306.9
+    },
+    {
+      "name": "s4-1",
+      "type": "str",
+      "length_m": 60.0,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 281.7,
+      "dist_end_race": 366.9
+    },
+    {
+      "name": "s4-2",
+      "type": "str",
+      "length_m": 59.1,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 340.8,
+      "dist_end_race": 426.0
+    },
+    {
+      "name": "s5",
+      "type": "str",
+      "length_m": 65.3,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 406.1,
+      "dist_end_race": 491.3
+    },
+    {
+      "name": "s6",
+      "type": "lft",
+      "length_m": 58.21,
+      "radius_m": 32.7,
+      "arc_deg": 102.0,
+      "dist_end_xml": 464.3,
+      "dist_end_race": 549.5
+    },
+    {
+      "name": "s7",
+      "type": "str",
+      "length_m": 8.6,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 472.9,
+      "dist_end_race": 558.1
+    },
+    {
+      "name": "s8",
+      "type": "lft",
+      "length_m": 39.37,
+      "radius_m": 24.0,
+      "arc_deg": 94.0,
+      "dist_end_xml": 512.3,
+      "dist_end_race": 597.5
+    },
+    {
+      "name": "s9",
+      "type": "str",
+      "length_m": 48.0,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 560.3,
+      "dist_end_race": 645.5
+    },
+    {
+      "name": "s10",
+      "type": "rgt",
+      "length_m": 49.81,
+      "radius_m": 105.7,
+      "arc_deg": 27.0,
+      "dist_end_xml": 610.1,
+      "dist_end_race": 695.3
+    },
+    {
+      "name": "s11",
+      "type": "str",
+      "length_m": 37.5,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 647.6,
+      "dist_end_race": 732.8
+    },
+    {
+      "name": "s12-1",
+      "type": "rgt",
+      "length_m": 36.1,
+      "radius_m": 44.2,
+      "arc_deg": 46.8,
+      "dist_end_xml": 683.7,
+      "dist_end_race": 768.9
+    },
+    {
+      "name": "s12-2",
+      "type": "rgt",
+      "length_m": 36.88,
+      "radius_m": 45.1,
+      "arc_deg": 46.8,
+      "dist_end_xml": 720.6,
+      "dist_end_race": 805.8
+    },
+    {
+      "name": "s13-1",
+      "type": "str",
+      "length_m": 30.0,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 750.6,
+      "dist_end_race": 835.8
+    },
+    {
+      "name": "s13-2",
+      "type": "str",
+      "length_m": 45.0,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 795.6,
+      "dist_end_race": 880.8
+    },
+    {
+      "name": "s13-3",
+      "type": "str",
+      "length_m": 35.0,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 830.6,
+      "dist_end_race": 915.8
+    },
+    {
+      "name": "s14",
+      "type": "str",
+      "length_m": 78.3,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 908.9,
+      "dist_end_race": 994.1
+    },
+    {
+      "name": "s15-1",
+      "type": "rgt",
+      "length_m": 60.4,
+      "radius_m": 76.9,
+      "arc_deg": 45.0,
+      "dist_end_xml": 969.3,
+      "dist_end_race": 1054.5
+    },
+    {
+      "name": "s15-2",
+      "type": "rgt",
+      "length_m": 29.45,
+      "radius_m": 62.5,
+      "arc_deg": 27.0,
+      "dist_end_xml": 998.8,
+      "dist_end_race": 1084.0
+    },
+    {
+      "name": "s16",
+      "type": "str",
+      "length_m": 72.1,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 1070.9,
+      "dist_end_race": 1156.1
+    },
+    {
+      "name": "s17",
+      "type": "str",
+      "length_m": 50.0,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 1120.9,
+      "dist_end_race": 1206.1
+    },
+    {
+      "name": "s18",
+      "type": "rgt",
+      "length_m": 92.81,
+      "radius_m": 259.4,
+      "arc_deg": 20.5,
+      "dist_end_xml": 1213.7,
+      "dist_end_race": 1298.9
+    },
+    {
+      "name": "s19-1",
+      "type": "str",
+      "length_m": 93.2,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 1306.9,
+      "dist_end_race": 1392.1
+    },
+    {
+      "name": "s19-2",
+      "type": "str",
+      "length_m": 93.2,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 1400.1,
+      "dist_end_race": 1485.3
+    },
+    {
+      "name": "s20",
+      "type": "lft",
+      "length_m": 62.83,
+      "radius_m": 72.0,
+      "arc_deg": 50.0,
+      "dist_end_xml": 1462.9,
+      "dist_end_race": 1548.1
+    },
+    {
+      "name": "s21",
+      "type": "lft",
+      "length_m": 55.29,
+      "radius_m": 48.0,
+      "arc_deg": 66.0,
+      "dist_end_xml": 1518.2,
+      "dist_end_race": 1603.4
+    },
+    {
+      "name": "s22-1",
+      "type": "str",
+      "length_m": 30.0,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 1548.2,
+      "dist_end_race": 1633.4
+    },
+    {
+      "name": "s22-2",
+      "type": "str",
+      "length_m": 90.0,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 1638.2,
+      "dist_end_race": 1723.4
+    },
+    {
+      "name": "s22-3",
+      "type": "str",
+      "length_m": 72.2,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 1710.4,
+      "dist_end_race": 1795.6
+    },
+    {
+      "name": "s23",
+      "type": "str",
+      "length_m": 112.4,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 1822.8,
+      "dist_end_race": 1908.0
+    },
+    {
+      "name": "s24",
+      "type": "lft",
+      "length_m": 31.67,
+      "radius_m": 33.6,
+      "arc_deg": 54.0,
+      "dist_end_xml": 1854.5,
+      "dist_end_race": 1939.7
+    },
+    {
+      "name": "s25",
+      "type": "str",
+      "length_m": 70.1,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 1924.6,
+      "dist_end_race": 2009.8
+    },
+    {
+      "name": "s26",
+      "type": "lft",
+      "length_m": 25.16,
+      "radius_m": 96.1,
+      "arc_deg": 15.0,
+      "dist_end_xml": 1949.7,
+      "dist_end_race": 2034.9
+    },
+    {
+      "name": "s27",
+      "type": "str",
+      "length_m": 28.8,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 1978.5,
+      "dist_end_race": 2063.7
+    },
+    {
+      "name": "s28",
+      "type": "lft",
+      "length_m": 73.78,
+      "radius_m": 384.3,
+      "arc_deg": 11.0,
+      "dist_end_xml": 2052.3,
+      "dist_end_race": 2137.5
+    },
+    {
+      "name": "s29",
+      "type": "str",
+      "length_m": 47.1,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 2099.4,
+      "dist_end_race": 2184.6
+    },
+    {
+      "name": "s30",
+      "type": "rgt",
+      "length_m": 33.54,
+      "radius_m": 480.4,
+      "arc_deg": 4.0,
+      "dist_end_xml": 2132.9,
+      "dist_end_race": 2218.1
+    },
+    {
+      "name": "s31",
+      "type": "lft",
+      "length_m": 50.31,
+      "radius_m": 480.4,
+      "arc_deg": 6.0,
+      "dist_end_xml": 2183.3,
+      "dist_end_race": 2268.5
+    },
+    {
+      "name": "s32",
+      "type": "str",
+      "length_m": 72.1,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 2255.4,
+      "dist_end_race": 2340.6
+    },
+    {
+      "name": "s33",
+      "type": "rgt",
+      "length_m": 18.54,
+      "radius_m": 62.5,
+      "arc_deg": 17.0,
+      "dist_end_xml": 2273.9,
+      "dist_end_race": 2359.1
+    },
+    {
+      "name": "s34",
+      "type": "str",
+      "length_m": 52.8,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 2326.7,
+      "dist_end_race": 2411.9
+    },
+    {
+      "name": "s35-1",
+      "type": "lft",
+      "length_m": 29.05,
+      "radius_m": 31.7,
+      "arc_deg": 52.5,
+      "dist_end_xml": 2355.7,
+      "dist_end_race": 2440.9
+    },
+    {
+      "name": "s35-2",
+      "type": "lft",
+      "length_m": 19.79,
+      "radius_m": 21.6,
+      "arc_deg": 52.5,
+      "dist_end_xml": 2375.5,
+      "dist_end_race": 2460.7
+    },
+    {
+      "name": "s36",
+      "type": "str",
+      "length_m": 13.5,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 2389.0,
+      "dist_end_race": 2474.2
+    },
+    {
+      "name": "s37",
+      "type": "rgt",
+      "length_m": 20.86,
+      "radius_m": 14.4,
+      "arc_deg": 83.0,
+      "dist_end_xml": 2409.9,
+      "dist_end_race": 2495.1
+    },
+    {
+      "name": "s38",
+      "type": "str",
+      "length_m": 38.4,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 2448.3,
+      "dist_end_race": 2533.5
+    },
+    {
+      "name": "s39",
+      "type": "rgt",
+      "length_m": 38.23,
+      "radius_m": 115.3,
+      "arc_deg": 19.0,
+      "dist_end_xml": 2486.5,
+      "dist_end_race": 2571.7
+    },
+    {
+      "name": "s40",
+      "type": "lft",
+      "length_m": 60.36,
+      "radius_m": 144.1,
+      "arc_deg": 24.0,
+      "dist_end_xml": 2546.9,
+      "dist_end_race": 2632.1
+    },
+    {
+      "name": "s41",
+      "type": "str",
+      "length_m": 25.0,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 2571.9,
+      "dist_end_race": 2657.1
+    },
+    {
+      "name": "s42-1",
+      "type": "lft",
+      "length_m": 60.78,
+      "radius_m": 72.1,
+      "arc_deg": 48.3,
+      "dist_end_xml": 2632.7,
+      "dist_end_race": 2717.9
+    },
+    {
+      "name": "s42-2",
+      "type": "lft",
+      "length_m": 63.09,
+      "radius_m": 75.0,
+      "arc_deg": 48.2,
+      "dist_end_xml": 2695.8,
+      "dist_end_race": 2781.0
+    },
+    {
+      "name": "s43",
+      "type": "str",
+      "length_m": 48.0,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 2743.8,
+      "dist_end_race": 2829.0
+    },
+    {
+      "name": "s44-1",
+      "type": "str",
+      "length_m": 45.0,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 2788.8,
+      "dist_end_race": 2874.0
+    },
+    {
+      "name": "s44-2",
+      "type": "str",
+      "length_m": 65.5,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 2854.3,
+      "dist_end_race": 2939.5
+    },
+    {
+      "name": "s45-1",
+      "type": "rgt",
+      "length_m": 40.72,
+      "radius_m": 57.6,
+      "arc_deg": 40.5,
+      "dist_end_xml": 2895.0,
+      "dist_end_race": 2980.2
+    },
+    {
+      "name": "s45-2",
+      "type": "rgt",
+      "length_m": 39.02,
+      "radius_m": 55.2,
+      "arc_deg": 40.5,
+      "dist_end_xml": 2934.0,
+      "dist_end_race": 3019.2
+    },
+    {
+      "name": "s46-1",
+      "type": "str",
+      "length_m": 125.0,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 3059.0,
+      "dist_end_race": 3144.2
+    },
+    {
+      "name": "s46-2",
+      "type": "str",
+      "length_m": 76.8,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 3135.8,
+      "dist_end_race": 3221.0
+    },
+    {
+      "name": "s47",
+      "type": "str",
+      "length_m": 26.37,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 3162.2,
+      "dist_end_race": 3247.4
+    },
+    {
+      "name": "s48-1",
+      "type": "lft",
+      "length_m": 20.4,
+      "radius_m": 20.0,
+      "arc_deg": 58.3,
+      "dist_end_xml": 3182.6,
+      "dist_end_race": 3267.8
+    },
+    {
+      "name": "s48-2",
+      "type": "lft",
+      "length_m": 18.62,
+      "radius_m": 18.3,
+      "arc_deg": 58.3,
+      "dist_end_xml": 3201.2,
+      "dist_end_race": 3286.4
+    },
+    {
+      "name": "s49-1",
+      "type": "str",
+      "length_m": 18.0,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 3219.2,
+      "dist_end_race": 3304.4
+    },
+    {
+      "name": "s49-2",
+      "type": "str",
+      "length_m": 73.03,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 3292.2,
+      "dist_end_race": 3377.4
+    },
+    {
+      "name": "s50",
+      "type": "str",
+      "length_m": 225.0,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 3517.2,
+      "dist_end_race": 3602.4
+    },
+    {
+      "name": "s50-2",
+      "type": "str",
+      "length_m": 5.59,
+      "radius_m": null,
+      "arc_deg": null,
+      "dist_end_xml": 3522.8,
+      "dist_end_race": 3608.0
+    }
+  ]
+}
