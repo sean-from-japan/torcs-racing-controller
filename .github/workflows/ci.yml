@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.9", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # No install step on purpose: the control law and its 46 tests are stdlib
+      # only. requirements.txt covers the scripts that drive a live TORCS, which
+      # cannot run here.
+      - name: Test the control law
+        run: python -m unittest discover -s tests -v
+
+      - name: Byte-compile every script
+        run: python -m compileall -q src tests
+
+      - name: Regenerate the figure from results/
+        shell: bash
+        run: |
+          python src/make_figure.py
+          git diff --exit-code -- figures/
