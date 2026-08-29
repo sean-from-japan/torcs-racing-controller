@@ -226,7 +226,8 @@ setup. Expect to land near a published number, not on it — see
 ## Reproduction
 
 ```bash
-git clone <this repo> && cd <this repo>
+git clone https://github.com/sean-from-japan/torcs-racing-controller.git
+cd torcs-racing-controller
 
 # 1. Control law only — no simulator, no dependencies
 python -m unittest discover -s tests
