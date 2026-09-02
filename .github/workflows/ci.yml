@@ -31,10 +31,94 @@ jobs:
         run: python -m unittest discover -s tests -v
 
       - name: Byte-compile every script
-        run: python -m compileall -q src tests
+        run: python -m compileall -q src tests container
 
       - name: Regenerate the figure from results/
         shell: bash
         run: |
           python src/make_figure.py
           git diff --exit-code -- figures/
+
+  # The full simulator image is ~18 GB unpacked, so racing it is a local/manual
+  # step.  What CI can check is everything up to the container: that the image
+  # lock is well formed, and that the bridge really does rebuild from the pinned
+  # upstream commit rather than only being described in prose.
+  bridge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Validate the image lock
+        run: |
+          python - <<'PY'
+          import json
+          lock = json.load(open("container/image-lock.json"))
+          assert lock["registry"] and lock["repository"]
+          for arch, img in lock["images"].items():
+              d = img["digest"]
+              assert d.startswith("sha256:") and len(d) == 71, (arch, d)
+          c = lock["upstream_bridge"]["commit"]
+          assert len(c) == 40 and all(x in "0123456789abcdef" for x in c), c
+          assert set(lock["upstream_bridge"]["sha256"]) == {
+              "gym_torcs.py", "snakeoil3_gym.py"
+          }
+          print("image-lock.json ok")
+          PY
+
+      - name: Fetch upstream gym_torcs at the pinned commit
+        run: |
+          COMMIT=$(python -c "import json;print(json.load(open('container/image-lock.json'))['upstream_bridge']['commit'])")
+          git init -q upstream
+          git -C upstream remote add origin https://github.com/ugo-nama-kun/gym_torcs.git
+          git -C upstream fetch -q --depth 1 origin "$COMMIT"
+          git -C upstream checkout -q FETCH_HEAD
+
+      - name: Rebuild the bridge
+        run: python container/prepare_bridge.py --src upstream --out third_party/gym_torcs
+
+      - name: Check the rebuilt bridge
+        run: |
+          python -m compileall -q third_party/gym_torcs
+          python - <<'PY'
+          src = open("third_party/gym_torcs/gym_torcs.py", encoding="utf-8").read()
+          assert "terminal_judge_start = 3000" in src
+          assert "snakeoil3.Client(p=3001" in src
+          assert "action_torcs['gear'] = 6" in src, "gear thresholds not enabled"
+          assert "track.min() < 0" not in src, "out-of-track termination still present"
+          snake = open("third_party/gym_torcs/snakeoil3_gym.py", encoding="utf-8").read()
+          assert "raise ConnectionError" in snake
+          assert "relaunch torcs" not in snake
+          print("rebuilt bridge has the expected behaviour")
+          PY
+
+      - name: Dockerfile base must match the lock
+        run: |
+          python - <<'PY'
+          import json, re
+          lock = json.load(open("container/image-lock.json"))
+          want = "%s/%s@%s" % (
+              lock["registry"], lock["repository"], lock["images"]["arm64"]["digest"]
+          )
+          text = open("container/Dockerfile", encoding="utf-8").read()
+          m = re.search(r"^ARG BASE_IMAGE=(\S+)", text, re.M)
+          assert m, "container/Dockerfile has no default BASE_IMAGE"
+          assert m.group(1) == want, (
+              "Dockerfile default base has drifted from image-lock.json:\n"
+              "  Dockerfile: %s\n  lock:       %s" % (m.group(1), want)
+          )
+          print("Dockerfile base matches the lock")
+          PY
+
+      - name: Rejecting a source that is not the pinned commit
+        run: |
+          mkdir -p bad && echo broken > bad/gym_torcs.py
+          cp upstream/snakeoil3_gym.py bad/
+          if python container/prepare_bridge.py --src bad --out /tmp/nope; then
+            echo "prepare_bridge.py accepted a mismatched source" >&2
+            exit 1
+          fi
+          echo "mismatched source correctly rejected"

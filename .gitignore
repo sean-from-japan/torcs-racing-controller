@@ -20,3 +20,5 @@ models/
 *.pkl
 *.pt
 *.pth
+# Container run outputs (bridge checkout, TORCS logs, result records)
+container/out/
