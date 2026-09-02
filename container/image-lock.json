@@ -1,0 +1,37 @@
+{
+  "comment": [
+    "Pinned organiser-provided TORCS competition image.",
+    "These digests were published by the competition organiser on Docker Hub;",
+    "the image's build definition is not public, so this is a pinned container",
+    "workflow, not a reproducible container build.  Never use the :latest tag --",
+    "it currently resolves to the arm64 image only."
+  ],
+  "registry": "docker.io",
+  "repository": "johnsloe/torcs-competition",
+  "images": {
+    "arm64": {
+      "digest": "sha256:fed57137c217a524ead2281dd085179066be373c1ffbc8c82880ee85ae07c4b9",
+      "compressed_bytes": 6084817275,
+      "verified": "2026-09-02, pulled and run on macOS 26.6.2 / Apple Silicon"
+    },
+    "amd64": {
+      "digest": "sha256:16681a45956067f2afaae579bac3373e02c93848168c4c494777a8ffa1196b68",
+      "compressed_bytes": 8400000000,
+      "verified": null
+    }
+  },
+  "ports": {
+    "6080": "noVNC browser desktop",
+    "5900": "VNC",
+    "3001": "SCR / TORCS <-> agent (UDP)"
+  },
+  "workspace_mountpoint": "/home/student/workspace",
+  "upstream_bridge": {
+    "repository": "https://github.com/ugo-nama-kun/gym_torcs",
+    "commit": "da5d6ddec3a35718fea89dc1c05037743173c668",
+    "sha256": {
+      "gym_torcs.py": "48a5b5da31ad99b402cb5bf805c2d29deca2db3df2a79293ab896c49fa933978",
+      "snakeoil3_gym.py": "599194c7a78f754247ff1f16c507b6ed92bc7f065a42b6934984600b52ed0d26"
+    }
+  }
+}
