@@ -238,27 +238,40 @@ python src/make_figure.py
 # 3. Regenerate the track analysis from your own TORCS install
 python src/analyze_track.py --xml /path/to/torcs/tracks/road/corkscrew/corkscrew.xml
 
-# 4. Drive it (requires TORCS + gym_torcs, see below)
-pip install -r requirements.txt
-export GYM_TORCS_DIR=/path/to/gym_torcs
-python src/run_eval.py --no-nn        # CMA-ES controller, target ~108.692 s
+# 4. Drive it, in the organiser's pinned container (see container/README.md)
+bash container/build.sh               # once: bake the bridge into a derived image
+bash container/run.sh --race          # CMA-ES controller on Corkscrew
 ```
 
-Steps 1–3 need only a Python interpreter. Step 4 additionally needs:
+Steps 1–3 need only a Python interpreter. Step 4 needs a container engine and about
+25 GB of free disk; it pulls a pinned image, rebuilds the simulator bridge from
+upstream sources, puts TORCS on the grid, and writes a result record. Measured on
+an Apple Silicon Mac on 2026-09-02: **108.538 s** best warm lap, against the
+historical 108.692 s reference. [`container/README.md`](container/README.md) has the
+full account, including what is and is not reproducible.
+
+To drive it against your own TORCS install instead:
+
+```bash
+pip install -r requirements.txt
+python container/prepare_bridge.py --src /path/to/gym_torcs --out third_party/gym_torcs
+python container/configure_race.py            # Corkscrew + scr_server
+# launch torcs → RACE → PRACTICE → NEW RACE, then:
+python -m src.run_eval --no-nn --no-wait
+```
+
+That additionally needs:
 
 - **TORCS** patched with the SCR competition server extensions, and the Corkscrew track.
-- **[gym_torcs](https://github.com/ugo-nama-kun/gym_torcs)** (MIT, Naoto Yoshida), cloned
-  to `third_party/gym_torcs` or pointed at by `GYM_TORCS_DIR`. It is not vendored here —
-  see [Attribution](#attribution).
-- **Two edits to `gym_torcs.py`** that were in force when these times were recorded, and
-  that you must reapply:
-  1. `terminal_judge_start = 500` → `3000`. At 500, an episode always ended at step 502
-     regardless of what the car did, which made long-run evaluation impossible.
-  2. Remove the `cos(angle) < 0` termination branch. It ended the episode the instant the
-     car faced backwards, preventing any recovery manoeuvre.
-
-Then launch `torcs` → RACE → NEW RACE → START, and press Enter in the terminal when the
-car is on the grid.
+- **[gym_torcs](https://github.com/ugo-nama-kun/gym_torcs)** (MIT, Naoto Yoshida) at
+  commit `da5d6dd`. It is not vendored here — see [Attribution](#attribution).
+- **The bridge edits that were in force when these times were recorded.** There are
+  nine of them, not the two an earlier version of this README claimed, and they are
+  not all cosmetic — upstream gym_torcs locks the car in first gear, so stock
+  gym_torcs does not reproduce these lap times at all. `prepare_bridge.py` applies
+  them from a verified upstream checkout and refuses to run against anything else;
+  [`container/README.md`](container/README.md#the-bridge-and-why-it-is-rebuilt-rather-than-shipped)
+  lists each one and why it matters.
 
 `run_eval.py` deliberately performs a throwaway lap before the measured run: the ARS
 training loop always evaluated a candidate on the *second* environment reset of a
@@ -376,6 +389,18 @@ ways and no others:
    [`results/README.md`](results/README.md) maps every file to its original name.
 5. **Excluded**: course handouts, IBM and university materials, assessed reports, slides,
    internal prompt libraries, training checkpoints, archived experiments and work logs.
+
+Two later corrections, from actually running the thing in a container on 2026-09-02:
+
+6. **`run_eval.py` clears `sys.argv` again.** `snakeoil3_gym.Client` re-parses `sys.argv`
+   with `getopt` when it is constructed and aborts on any flag it does not recognise. The
+   private runner cleared `sys.argv` before creating the environment; that line was lost
+   in the extraction, which meant every documented flag — `--no-nn` included — killed the
+   run before the car moved. Restored, with a comment saying why. It also gained
+   `--no-wait` for non-interactive runs; the interactive prompt is still the default.
+7. **The bridge is rebuilt, not described.** `container/prepare_bridge.py` applies the
+   nine edits from a verified upstream checkout, replacing a README paragraph that
+   described two of them.
 
 ## Attribution
 
