@@ -24,14 +24,18 @@ _HELP = """
 gym_torcs was not found at:
     {path}
 
-Set GYM_TORCS_DIR, pass --gym-torcs <dir>, or clone the bridge into
-third_party/gym_torcs:
+Build it from a clean upstream checkout:
 
-    git clone https://github.com/ugo-nama-kun/gym_torcs third_party/gym_torcs
+    git clone https://github.com/ugo-nama-kun/gym_torcs /tmp/gym_torcs
+    git -C /tmp/gym_torcs checkout da5d6ddec3a35718fea89dc1c05037743173c668
+    python container/prepare_bridge.py --src /tmp/gym_torcs --out third_party/gym_torcs
 
-The directory must contain gym_torcs.py and snakeoil3_gym.py.  Two local
-edits to gym_torcs.py were in force when these lap times were recorded --
-they are listed in README.md and must be reapplied to reproduce them.
+then set GYM_TORCS_DIR or pass --gym-torcs <dir>.
+
+A stock upstream checkout is not enough: nine local edits were in force when
+these lap times were recorded, and they change behaviour -- upstream locks the
+car in first gear.  prepare_bridge.py applies them; container/README.md lists
+each one and why it matters.
 """
 
 
