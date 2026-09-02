@@ -50,6 +50,11 @@ def parse_args(argv=None):
     p.add_argument("--gym-torcs", default=None, help="path to the gym_torcs checkout")
     p.add_argument("--hold", type=int, default=0, help="seconds to hold after last lap")
     p.add_argument("--retries", type=int, default=5, help="max recorded-run retries")
+    p.add_argument(
+        "--no-wait",
+        action="store_true",
+        help="skip the Enter prompt; TORCS must already be waiting on 3001",
+    )
     return p.parse_args(argv)
 
 
@@ -179,6 +184,11 @@ def run_laps(env, model, p, n_laps, hold=0):
 def main(argv=None):
     args = parse_args(argv)
 
+    # snakeoil3's Client re-parses sys.argv with getopt when it is constructed
+    # and aborts on any flag it does not know, so our own flags have to go
+    # before the environment opens a client.
+    sys.argv = sys.argv[:1]
+
     if not os.path.exists(BASE_JSON):
         raise SystemExit("controller parameters not found: %s" % BASE_JSON)
     p = ctl.Params.from_json(BASE_JSON)
@@ -198,9 +208,13 @@ def main(argv=None):
     print("  run 1      : 1 lap, NN off, to match the training reset sequence")
     print("  run 2      : %d laps (1 carry-over + %d warm), measured" % (n_laps, args.warm))
     print()
-    print("Launch TORCS -> RACE -> NEW RACE -> START, then press Enter.")
-    print("=" * 70)
-    input()
+    if args.no_wait:
+        print("TORCS is expected to be waiting on port 3001 already.")
+        print("=" * 70)
+    else:
+        print("Launch TORCS -> RACE -> NEW RACE -> START, then press Enter.")
+        print("=" * 70)
+        input()
 
     env = TorcsEnv(vision=False, throttle=True, gear_change=False)
     env.default_speed = p.C
