@@ -1,5 +1,7 @@
 # Corkscrew autonomous racing controller — CMA-ES + residual NN
 
+**English** | [日本語概要](README.ja.md)
+
 An autonomous driving controller for [TORCS](https://sourceforge.net/projects/torcs/),
 taken from **261.42 s to 106.63 s** on the Corkscrew track — a **59% reduction** in best
 warm lap time.
