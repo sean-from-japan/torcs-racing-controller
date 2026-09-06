@@ -383,7 +383,7 @@ it is a six-hour training job against the committed base, not a reconstruction.
 from the tables above; the next committed measurement after 122.060 s is 108.692 s, which
 includes both of those changes.
 
-**Exact lap times** depend on the TORCS build, the two gym_torcs edits below, and the race
+**Exact lap times** depend on the TORCS build, the nine gym_torcs edits below, and the race
 setup. Expect to land near a published number, not on it — see
 [Limitations](#limitations) on why the environment, not just the code, needed pinning.
 
@@ -492,8 +492,8 @@ league: I do not have access to the final standings and will not assert one.
 ## Limitations
 
 - **The environment was never containerised.** Development ran against a TORCS install on
-  one machine, patched by hand — the two `gym_torcs.py` edits below are a symptom of
-  that. The code is portable and the training loop re-runs, but the environment it was
+  one machine, patched by hand — the nine `gym_torcs.py` edits under
+  [Reproduction](#reproduction) are a symptom of that. The code is portable and the training loop re-runs, but the environment it was
   measured in exists only as instructions, and the one training artefact that fell
   outside version control is still sitting on that machine rather than in this
   repository. A Docker image pinning TORCS, the SCR server patch and the bridge would
