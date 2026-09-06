@@ -1,6 +1,6 @@
 # Corkscrew autonomous racing controller — CMA-ES + residual NN
 
-**English** | [日本語概要](README.ja.md)
+**English** | [日本語](README.ja.md)
 
 An autonomous driving controller for [TORCS](https://sourceforge.net/projects/torcs/),
 taken from **261.42 s to 106.63 s** on the Corkscrew track — a **59% reduction** in best
@@ -30,15 +30,87 @@ python -m unittest discover -s tests
 
 ---
 
-## The problem
+## The simulator, and what the league scored
 
-TORCS exposes a car through 19 range sensors plus speed, heading angle and lateral
-track position, and expects a steering and throttle command every 20 ms. The league
-scored the **best warm lap** (lap 2 onwards; lap 1 starts from rest and does not count)
-on Corkscrew, a 3,608 m circuit whose corner radii range from 480 m down to 14 m.
+**TORCS** is an open-source 3D racing simulator with a proper vehicle model — tyre load
+and slip, aerodynamics, gearbox, fuel and damage — and it has been the platform for the
+*Simulated Car Racing* (SCR) championship since 2008. The SCR patch adds a driver module,
+`scr_server`, that drives nothing itself: it opens a UDP port, publishes the car's sensors
+once per control step, and applies whatever command comes back. A controller is therefore
+a separate process, in any language, talking to the simulator over a socket. Mine is
+Python; `gym_torcs` is the bridge that speaks the protocol.
 
-The supplied reference driver — `snakeoil`, a fixed rule-based controller — laps it in
-261.42 s. That was the number to beat.
+**What the controller can see.** One UDP message per control step:
+
+| Sensor | Meaning |
+|---|---|
+| `track[0..18]` | 19 rangefinder beams to the track edge, in metres, saturating at 200 m |
+| `angle` | angle between the car's heading and the track direction, radians |
+| `trackPos` | lateral position, normalised: 0 = centre line, ±1 = on the edge |
+| `speedX/Y/Z` | body-frame velocity, km/h |
+| `distRaced` | distance covered since the session started, metres |
+| `curLapTime`, `lastLapTime` | timing |
+| `rpm`, `gear`, `wheelSpinVel`, `damage`, `fuel` | drivetrain and car state |
+
+The beams are not evenly spaced. The bridge requests
+`-45 -19 -12 -7 -4 -2.5 -1.7 -1 -0.5 0 0.5 1 1.7 2.5 4 7 12 19 45` degrees, which spends
+almost all of the resolution near straight ahead. `track[9]` is the beam pointing exactly
+forwards, and it reads the distance to wherever the track first turns away — on a straight
+it saturates, and it collapses as a corner approaches. That one number is the entire input
+to the speed subsystem below. The sensor layout is not a detail here; it is the reason a
+lookahead controller is the natural shape of solution.
+
+**What it commands.** `steer` in [−1, +1], and a single signed throttle in [−1, +1] where
+positive is accelerator and negative is brake. Gear selection is left to the bridge's
+speed thresholds — the controller never shifts. One command per control step, every 20 ms
+of simulated time (`RCM_MAX_DT_ROBOTS` in the TORCS source carried in the pinned image),
+so a 108 s lap is roughly 5,400 decisions.
+
+**What was scored.** The **best warm lap** on Corkscrew. Lap 1 starts from rest on the
+grid and does not count; the measured lap is lap 2 onwards, taken with the car already at
+speed. The session is a solo practice run — no opponents, no traffic — so nothing stands
+between the controller and the clock. Corkscrew is 3,608 m long with corner radii from
+480 m down to 14 m.
+
+The supplied reference driver, `snakeoil`, is a fixed rule-based controller whose entire
+steering law is `steer = angle · 10/π − trackPos · 0.10`, with a speed cap and a crude
+automatic throttle. It laps Corkscrew in 261.42 s. That was the number to beat.
+
+## The track
+
+Corkscrew is not a track you can reason about from a lap time. It is a 3,608 m circuit
+with a 225 m finish straight, two tight left-hand complexes, and a 14 m-radius corner —
+and the two things that mattered most in this project, the intermittent crash band and the
+final hairpin, are 800 m apart and look nothing alike.
+
+Before any optimisation ran, I parsed the track definition into a segment table — every
+section with its type, radius, arc and cumulative distance
+([`src/analyze_track.py`](src/analyze_track.py) →
+[`results/corkscrew_segments.json`](results/corkscrew_segments.json),
+[`docs/corkscrew_analysis.md`](docs/corkscrew_analysis.md)). This map is that table drawn
+to scale: the plan view is integrated from the segment lengths, radii and arc angles, so
+nothing on it is placed by hand.
+
+![Corkscrew corner geometry, with the crash band marked](figures/corkscrew_corner_map.svg)
+
+The eight tightest corners, which are what the speed subsystem has to survive:
+
+| Segment | distRaced | Radius |
+|---|---|---|
+| s37 | 2,495 m | 14 m |
+| s48-2 | 3,286 m | 18 m |
+| s48-1 | 3,268 m | 20 m |
+| s35-2 | 2,461 m | 22 m |
+| s8 | 598 m | 24 m |
+| s35-1 | 2,441 m | 32 m |
+| s6 | 550 m | 33 m |
+| s24 | 1,940 m | 34 m |
+
+All 66 segments are in [`docs/corkscrew_analysis.md`](docs/corkscrew_analysis.md).
+
+Having exact radii before starting is what later made [the s35
+diagnosis](#the-s35-diagnosis) a cross-reference rather than a guess. Most of the value of
+that table was collected months after it was written.
 
 ## My contribution
 
@@ -70,6 +142,60 @@ learning not to crash.
 The same reasoning governs the whole design: the parameter count grows only when the
 current space is exhausted, and each stage starts from the previous stage's best.
 
+## How CMA-ES was configured
+
+CMA-ES keeps one multivariate normal distribution over the parameter vector and, each
+generation, does four things:
+
+1. **Sample.** Draw λ candidate parameter vectors from `N(m, σ²C)`. The mean `m` is the
+   current best guess, `σ` the overall step size, and the covariance `C` says which
+   directions — and which *combinations* of parameters — are worth exploring.
+2. **Evaluate.** Run each candidate. Here that is a live TORCS episode, so λ is small.
+3. **Rank.** Sort by fitness, keep the best μ = λ/2. Only the *ordering* is used; the lap
+   times themselves never enter the update.
+4. **Update.** Move `m` to a weighted mean of those μ, stretch `C` toward the directions
+   that just produced improvements, and adapt σ from the length of the path `m` has been
+   travelling — a long, consistent path means take bigger steps; a short, jittery one
+   means shrink.
+
+Step 3 is the property that made it the right tool. Because the update is rank-based, a
+noisy objective measured in raw seconds works as-is: no reward shaping, no normalisation,
+no differentiable simulator. And the covariance adaptation *learns* the scaling of the
+problem, which matters when steering gain and a sector boundary in metres are being
+searched in the same vector.
+
+Concretely, stage 4 ([`src/train_cma_sector.py`](src/train_cma_sector.py)) ran:
+
+| Setting | Value | Why |
+|---|---|---|
+| Population λ | 8 | Below the library default of 10 for 8 dimensions. Every evaluation is a live four-lap episode, so the population size is set by what the time budget can afford, not by the dimension count. |
+| Initial mean | the 122.060 s six-parameter best | Never a random restart. Each stage begins from a policy that already finishes the lap. |
+| Per-dimension σ | `[0.07, 0.013, 1.5, 0.013, 0.00016, 0.016, 0.20, 80.0]` | The parameters span five orders of magnitude — `T ≈ 0.009` against `switch_dist ≈ 3,000` — so a single scalar step size would either freeze one dimension or throw the other off the track. Tight on the six already-tuned parameters, wide on the two new ones. |
+| Box bounds | e.g. `switch_dist ∈ [2700, 3400]`, `K_final ∈ [0.3, 2.0]` | Confines each parameter to values that mean something: the sector switch can only land between the s45 corners and the s48 hairpin, and `K_final`'s upper end is the value at which it has no effect at all. |
+| Budget | 8 h, ~50–60 generations | Checkpointed every generation, so an interrupted run resumes rather than restarts. |
+
+The objective is the part worth reading, because a lap time only exists if the car
+finishes a lap:
+
+```python
+def _fitness(warm, cold, dist, steps):
+    if warm is not None:              # finished a warm lap: score it directly
+        return warm
+    if cold is not None:              # only finished the standing-start lap
+        return cold * 1.2
+    if dist > 500 and steps > 100:    # crashed: extrapolate the pace it was holding
+        return (steps * 0.02) * TRACK_LAP_M / dist
+    return 500.0                      # never got going
+```
+
+Minimising, so lower is better. The middle two branches are what keep the search moving.
+If every candidate that crashes scores the same, the failures form a flat plateau and the
+covariance update has nothing to learn from — the search wanders. Scoring a crash by the
+pace it was holding when it stopped turns that plateau into a slope: a candidate that
+crashed at 3,000 m while running quickly ranks above one that spun off at the first
+corner, and the distribution moves toward the fast-and-nearly-safe region rather than away
+from failure in general.
+
 ## Iteration timeline
 
 Two parameters at a time, so every improvement could be attributed to a specific
@@ -94,6 +220,30 @@ v_target  = clip(K_eff · track[9], 30, C)          # track[9] = distance dead a
 throttle  = clip((v_target − speedX) · T, −1, +1)
 ```
 
+That is the global law, and on its own it is worth about 122 s. The remaining 14 s came
+from admitting that one set of constants cannot serve a whole lap, and carving out places
+where something else applies. There are six of them, split between the two subsystems.
+Every boundary drawn below is read straight out of
+[`results/stage4_cma_8param_sector_s35.json`](results/stage4_cma_8param_sector_s35.json),
+so neither map can describe a controller other than the committed one.
+
+**Steering** gets two windows where the target line is pulled off the centre of the track:
+into the s20+s21 complex, and through the s35 chicane. Outside them the target is the
+centre line, and only the gains `A`, `B` and `D` are in play.
+
+![Racing-line windows on the lap](figures/corkscrew_zones_steering.svg)
+
+**Speed** gets four overrides: a hard brake in the first 500 m of every lap whenever the
+car is above 140 km/h, the s35 ceiling, a reduced lookahead gain through the braking
+sector into the final hairpin, and full throttle from 3,305 m to the line.
+
+![Speed overrides on the lap](figures/corkscrew_zones_speed.svg)
+
+Together the six cover 2,026 m of the 3,608 m lap; the remaining 1,582 m is the single
+global law, unchanged. None of them is global, and that was deliberate: an intervention
+that applies everywhere cannot be attributed to anything, and cannot be undone without
+touching the whole lap. Each of these can be switched off in isolation and re-measured.
+
 Two findings from this phase worth calling out:
 
 **The deadband `D` was not an obvious parameter.** Lap times had plateaued around 124 s
@@ -114,12 +264,9 @@ Late in the project, the car began crashing **intermittently** at one place, at 
 that were safe everywhere else. Intermittent, corner-local failures are where trial and
 error gets expensive, so I did not guess.
 
-Before optimisation began I had parsed the Corkscrew track definition into a segment
-table — every section with its type, radius, arc and cumulative distance
-([`src/analyze_track.py`](src/analyze_track.py) →
-[`results/corkscrew_segments.json`](results/corkscrew_segments.json),
-[`docs/corkscrew_analysis.md`](docs/corkscrew_analysis.md)). Cross-referencing the
-`distRaced` value at each crash against that table put every failure in one band:
+The segment table from [The track](#the-track) was already sitting in `results/`.
+Cross-referencing the `distRaced` value logged at each crash against it put every failure
+in one band — the red stretch on [the corner map](#the-track):
 
 | distRaced | Segment | Direction | Radius | Arc |
 |---|---|---|---|---|
@@ -202,6 +349,7 @@ network converged on in the recorded run.
 - [`src/train_nn_ars.py`](src/train_nn_ars.py), the ARS training loop that produced the
   106.630 s result, end to end from the committed 108.692 s base
 - the track segment analysis, from your own TORCS install
+- all three track maps and the progression chart, from the committed results
 - the control law itself, via the test suite, with nothing installed at all
 
 **Not archived:** `models/nn_ars_s35_best.pt` — the 33 output-layer weights from the
@@ -234,8 +382,9 @@ cd torcs-racing-controller
 # 1. Control law only — no simulator, no dependencies
 python -m unittest discover -s tests
 
-# 2. Regenerate the figure from results/
+# 2. Regenerate the figures from results/
 python src/make_figure.py
+python src/make_track_map.py
 
 # 3. Regenerate the track analysis from your own TORCS install
 python src/analyze_track.py --xml /path/to/torcs/tracks/road/corkscrew/corkscrew.xml
@@ -364,6 +513,7 @@ src/train_cma_sector.py   stage 4 training script, unmodified logic
 src/train_nn_ars.py       residual NN + ARS training loop
 src/analyze_track.py      TORCS track XML → segment table
 src/make_figure.py        results/ → figures/lap_time_progression.svg
+src/make_track_map.py     segments + parameters → the three Corkscrew track maps
 src/torcs_env.py          locates the gym_torcs bridge; the only file that imports it
 results/                  measured parameters per stage + raw lap log + track segments
 docs/corkscrew_analysis.md  corner map used for the s35 diagnosis

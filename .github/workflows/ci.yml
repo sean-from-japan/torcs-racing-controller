@@ -33,10 +33,11 @@ jobs:
       - name: Byte-compile every script
         run: python -m compileall -q src tests container
 
-      - name: Regenerate the figure from results/
+      - name: Regenerate the figures from results/
         shell: bash
         run: |
           python src/make_figure.py
+          python src/make_track_map.py
           git diff --exit-code -- figures/
 
   # The full simulator image is ~18 GB unpacked, so racing it is a local/manual
