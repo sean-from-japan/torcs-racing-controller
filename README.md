@@ -208,7 +208,7 @@ decision.
 | CMA-ES, 5 params | `K` (lookahead gain), `T` (throttle gain) | 124.148 s | [`stage2_cma_5param.json`](results/stage2_cma_5param.json) |
 | CMA-ES, 6 params | `D` (steering deadband) | 122.060 s | [`stage3_cma_6param_deadband.json`](results/stage3_cma_6param_deadband.json) |
 | CMA-ES, 8 params + s35 cap | `K_final`, `switch_dist`, `C_s35` | 108.692 s | [`stage4_cma_8param_sector_s35.json`](results/stage4_cma_8param_sector_s35.json) |
-| Residual NN + ARS | 33 network parameters | 106.630 s | trained weights not archived — see [Reproducing this](#reproducing-this) |
+| Residual NN + ARS | 33 network parameters | 106.630 s | trained weights not committed here yet — see [Reproducing this](#reproducing-this) |
 
 The controller is split into a steering subsystem and a speed subsystem so that the
 search space stays interpretable — when a stage regresses, you can tell which subsystem
@@ -339,7 +339,7 @@ several members' approaches, did not.
 
 ## Reproducing this
 
-The agent runs. What was not archived is one file: the output-layer weights the residual
+The agent runs. One file is not in this repository: the output-layer weights the residual
 network converged on in the recorded run.
 
 **Runs today**, given TORCS and gym_torcs (see [Reproduction](#reproduction)):
@@ -352,12 +352,26 @@ network converged on in the recorded run.
 - all three track maps and the progression chart, from the committed results
 - the control law itself, via the test suite, with nothing installed at all
 
-**Not archived:** `models/nn_ars_s35_best.pt` — the 33 output-layer weights from the
-106.630 s run — was never committed (`*.pt` sat in `.gitignore`), and is in no branch of
-either project repository. The *specific* recorded lap therefore cannot be replayed from
-this repository; a fresh ARS run would converge on its own weights and its own time.
+**Not committed here yet:** `models/nn_ars_s35_best.pt` — the 33 output-layer weights
+from the 106.630 s run — was never committed (`*.pt` sat in `.gitignore`) and is in no
+branch of either project repository. It was not deleted, though: the file should still be
+on the Windows machine this project was developed on. What is holding it back is that the
+weights alone do not replay the lap, so I am establishing what else the run depends on —
+Torch version, the local gym_torcs snapshot, the hand-patched TORCS build, the race setup
+— before publishing something that would not load. Tracked as
+[issue #1](https://github.com/sean-from-japan/torcs-racing-controller/issues/1). In the
+meantime the file can be supplied on request, and the recorded lap is on video. Until it
+is here with the environment it needs, this repository on its own cannot replay that lap:
 `run_eval.py` says so and exits rather than pretend, and the chart marks that stage as
 having no committed artefact.
+
+**Where it has been reproduced:** on the original development machine, and only there.
+The environment was never containerised (see [Limitations](#limitations)), so the
+residual-NN stage has not yet been run anywhere else — a portability gap, not a missing
+result. `container/` now pins the environment for the 108.692 s CMA-ES stage; the
+residual-NN stage needs the same treatment. If the weights turn out to be unusable, ARS can be re-run from the committed base, but that is a six-hour training job
+per attempt converging on its own weights and its own time — a fallback, not a quick
+regeneration.
 
 That file is an output, not the method. Everything that produced it is here: the residual
 formulation, the zero-initialised output layer that guarantees a working starting policy,
@@ -480,10 +494,11 @@ league: I do not have access to the final standings and will not assert one.
 - **The environment was never containerised.** Development ran against a TORCS install on
   one machine, patched by hand — the two `gym_torcs.py` edits below are a symptom of
   that. The code is portable and the training loop re-runs, but the environment it was
-  measured in exists only as instructions, and a training artefact that fell outside
-  version control was lost with it. A Docker image pinning TORCS, the SCR server patch
-  and the bridge would have made both the training run and the recorded lap portable,
-  and it is the first change I would make to this project.
+  measured in exists only as instructions, and the one training artefact that fell
+  outside version control is still sitting on that machine rather than in this
+  repository. A Docker image pinning TORCS, the SCR server patch and the bridge would
+  have made both the training run and the recorded lap portable from the start, and it
+  is the first change I would make to this project.
 - **One track, one car, one race setup.** Every parameter is fitted to Corkscrew.
   `results/` contains no evidence of generalisation, and I would expect very little —
   the racing-line profiles and the s35 cap are hard-coded to specific distances on this

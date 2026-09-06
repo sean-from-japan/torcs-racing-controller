@@ -25,7 +25,7 @@ STAGES = [
     ("CMA-ES, 5 params", "+ K, T", "stage2_cma_5param.json", ""),
     ("CMA-ES, 6 params", "+ D (steering deadband)", "stage3_cma_6param_deadband.json", ""),
     ("CMA-ES, 8 params + s35 cap", "+ K_final, switch_dist, C_s35", "stage4_cma_8param_sector_s35.json", ""),
-    ("Residual NN + ARS", "throttle + 0.2 x NN(obs)", None, "trained weights not archived"),
+    ("Residual NN + ARS", "throttle + 0.2 x NN(obs)", None, "trained weights not committed here yet"),
 ]
 
 # Reported in the project log for the stage with no committed artefact.
@@ -131,7 +131,7 @@ def build():
     )
     out.append(
         '<text x="%d" y="%d" font-size="11.5" fill="#5a6673">'
-        "measured in the project; trained weights not archived</text>" % (LEFT + 259, foot_y)
+        "measured in the project; trained weights not committed here yet</text>" % (LEFT + 259, foot_y)
     )
     out.append("</svg>")
     return "\n".join(out)

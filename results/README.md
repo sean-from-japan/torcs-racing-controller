@@ -48,10 +48,12 @@ Both changes are present in `stage4_cma_8param_sector_s35.json` (`K_final`,
 intermediate measurements do not.
 
 The residual-NN result of **106.630 s** likewise has no artefact here: the output-layer
-weights ARS converged on were never committed. The training loop that produces them is
-`src/train_nn_ars.py`, and it runs from `stage4_cma_8param_sector_s35.json` — what is
-missing is that run's output, not the means of producing one. See "Reproducing this" in
-the top-level README.
+weights ARS converged on were never committed. They were not lost either — the file
+should still be on the machine the project was developed on, and publishing it is tracked
+as issue #1. The training loop that produces them is `src/train_nn_ars.py`, and it runs
+from `stage4_cma_8param_sector_s35.json` — what is missing from this repository is that
+run's output, not the means of producing one. See "Reproducing this" in the top-level
+README.
 
 ## About `lap_times_raw.csv`
 

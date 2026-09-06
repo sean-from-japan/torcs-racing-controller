@@ -194,6 +194,8 @@ describe shapes that nothing here reads.
 
 ## Not covered here
 
-The 106.630 s residual-network result cannot be reproduced: its trained weights
-were never archived. See the repository README. This directory reproduces the
-Stage 4 CMA-ES configuration only.
+The 106.630 s residual-network result is not reproducible from this container
+yet: its trained weights were never committed to the repository. They should
+still exist on the original development machine, and bringing them and their
+dependencies here is tracked as issue #1. See the repository README. This
+directory reproduces the Stage 4 CMA-ES configuration only.

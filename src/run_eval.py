@@ -10,8 +10,10 @@ which is the configuration the committed parameters in
     python src/run_eval.py                # + residual NN (needs weights)
 
 NOTE ON THE WEIGHTS: the 106.630 s figure requires the output-layer weights
-that ARS converged on in the recorded run.  Those weights were never committed,
-so this script cannot replay that exact lap.  The training loop that produces
+that ARS converged on in the recorded run.  Those weights are not committed
+here yet -- they should still be on the machine the project was developed on,
+and publishing them is tracked as issue #1 -- so this script cannot replay
+that exact lap from this repository alone.  The training loop that produces
 them is `train_nn_ars.py`, and it runs from the committed 108.692 s base.
 See README.md, "Reproducing this".
 
@@ -66,10 +68,11 @@ def build_model(weights_path):
     if not os.path.exists(weights_path):
         raise SystemExit(
             "Residual NN weights not found: %s\n"
-            "The weights from the recorded 106.630 s run were never archived, so that\n"
-            "exact lap cannot be replayed here.  Run with --no-nn to drive the CMA-ES\n"
-            "controller (108.692 s), or train a new residual network with\n"
-            "train_nn_ars.py and pass it via --weights." % weights_path
+            "The weights from the recorded 106.630 s run are not committed here\n"
+            "yet (see issue #1), so that exact lap cannot be replayed from this\n"
+            "repository alone.  Run with --no-nn to drive the CMA-ES controller\n"
+            "(108.692 s), or train a new residual network with train_nn_ars.py\n"
+            "and pass it via --weights." % weights_path
         )
     model = nn.Sequential(
         nn.Linear(23, 32),
