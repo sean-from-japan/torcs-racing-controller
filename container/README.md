@@ -109,6 +109,12 @@ identical on other hosts or architectures, and no tolerance is claimed. What is
 claimed is that the run is repeatable here, and that everything needed to check
 it elsewhere is recorded.
 
+It is also not a like-for-like re-measurement. The historical figure was taken in
+a 10-lap Quick Race on Windows with fuel consumption on; this runs Practice with
+`-nofuel`. Both are solo on the grid with damage off. The differences, and the one
+setting that has not been read directly on both sides, are in
+[`docs/RACE_CONDITIONS.md`](../docs/RACE_CONDITIONS.md).
+
 ## The bridge, and why it is rebuilt rather than shipped
 
 The lap times in this repository were **not** measured against stock gym_torcs.

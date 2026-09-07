@@ -83,10 +83,14 @@ Verified, here, today:
   the private runner used, so the file is being fed what it was trained on
 
 **Not verified: the lap time.** 106.630 s was measured on the original Windows machine
-in May 2026 and has not been reproduced anywhere since — not on another host, and not in
-the pinned container, which so far races the CMA-ES stage only. Publishing the weights
-removes the missing-artefact problem; it does not by itself make the lap portable, and
-this file should not be read as a claim that it is. See
+in May 2026 and has not been reproduced since — not on another host, and not in the
+pinned container, which so far races the CMA-ES stage only. It is also the best of the
+72 evaluations the ARS loop made rather than a separate benchmark run, and it was
+measured solo on the grid with damage off.
+[`docs/RACE_CONDITIONS.md`](../docs/RACE_CONDITIONS.md) records that setup in full and
+says plainly what a maximum over noisy draws is worth. Publishing the weights removes
+the missing-artefact problem; it does not by itself make the lap portable, and this file
+should not be read as a claim that it is. See
 [`container/README.md`](../container/README.md) for what the container has and has not
 reproduced, and issue #1 for the remaining work.
 

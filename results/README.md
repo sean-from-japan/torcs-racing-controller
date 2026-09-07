@@ -6,7 +6,9 @@ reconstructed or re-measured afterwards. Files were renamed to describe their st
 original names are given so anything quoted here can be traced back.
 
 `best_lap_2plus_s` is the metric throughout: the fastest lap from lap 2 onwards. Lap 1
-starts from rest and did not count in the league.
+starts from rest and did not count in the league. The setup behind every one of these
+numbers — solo on the grid, damage off, 10-lap Quick Race, one host — is in
+[`docs/RACE_CONDITIONS.md`](../docs/RACE_CONDITIONS.md).
 
 | File | Original name | Best warm lap | Stage |
 |---|---|---|---|

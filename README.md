@@ -329,6 +329,13 @@ Best warm lap on Corkscrew, league-standard race setup:
 | CMA-ES controller (8 params + s35 cap) | 108.692 s | −58.4% |
 | + residual NN (ARS, 6 h) | 106.630 s | −59.2% |
 
+Every one of those was measured solo on an empty circuit — one car on the grid, damage
+off, in a 10-lap Quick Race on one Windows laptop. And 106.630 s is not a benchmark run:
+it is the best of the 72 evaluations the ARS loop made, so it carries the optimistic bias
+that a maximum over noisy draws always carries.
+[`docs/RACE_CONDITIONS.md`](docs/RACE_CONDITIONS.md) is the full setup — the race
+options, the host, the run procedure, and how the container run differs from it.
+
 Raw per-lap records for the CMA-ES stages up to 122 s are in
 [`results/lap_times_raw.csv`](results/lap_times_raw.csv) (573 rows). Its column count
 varies by stage because each stage's script appended its own header — it is the original
@@ -522,7 +529,8 @@ league: I do not have access to the final standings and will not assert one.
 - **Noisy single-run fitness.** Each candidate was scored on the best warm lap of one
   episode. Repeated evaluation would have given a more honest fitness signal, but at a
   simulator cost the project budget could not carry — so some of the difference between
-  neighbouring stages is run-to-run variance, not real improvement.
+  neighbouring stages is run-to-run variance, not real improvement. This applies hardest
+  to the headline number: see [`docs/RACE_CONDITIONS.md`](docs/RACE_CONDITIONS.md).
 - **Rationale was not logged alongside results.** Lap times were recorded automatically;
   the reasoning behind each parameter expansion was not. Reconstructing this repository
   from the raw artefacts was harder than it needed to be, which is the strongest argument
@@ -547,6 +555,7 @@ src/torcs_env.py          locates the gym_torcs bridge; the only file that impor
 models/nn_ars_s35_best.pt residual-NN weights from the 106.630 s run + provenance note
 results/                  measured parameters per stage + raw lap log + track segments
 docs/corkscrew_analysis.md  corner map used for the s35 diagnosis
+docs/RACE_CONDITIONS.md     the setup every lap time was measured in
 docs/PROVENANCE.md          origin of every file, what was excluded, what was checked
 tests/test_controller.py  46 tests, stdlib only
 ```
