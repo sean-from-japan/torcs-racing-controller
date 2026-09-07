@@ -230,12 +230,16 @@ def main(argv=None):
 
     model = make_model()
 
-    # Optional warm start for the hidden layers from a behaviour-cloning run.
-    # strict=False: the BC model had a 22-dim input, so only layer 0 is skipped
-    # and the 32->32 hidden layer still transfers.  These weights are not
-    # distributed with this repository; without them the hidden layers stay at
-    # their random initialisation, which is what the published run used as a
-    # fallback whenever the file was absent.
+    # Warm start for the hidden layers from a behaviour-cloning run that
+    # regressed this project's own CMA-ES throttle command over recorded
+    # Corkscrew laps.  The published run loaded it: layers 0 and 2 of
+    # models/nn_ars_s35_best.pt are byte-identical to bc_keff.pt, so every
+    # hidden weight transferred, first layer included.  (An earlier note here
+    # claimed a 22-dim BC input and a skipped first layer.  That described a
+    # superseded version of the BC script, not the one behind the published
+    # weights.)  bc_keff.pt is not distributed here -- see models/README.md.
+    # Without it the hidden layers stay random, which is a different
+    # experiment from the published run rather than a reproduction of it.
     if os.path.exists(BC_PT):
         try:
             state = torch.load(BC_PT, map_location="cpu", weights_only=True)
@@ -244,7 +248,10 @@ def main(argv=None):
         except Exception as exc:  # noqa: BLE001
             print("  WARNING: could not load %s (%s); using random init" % (BC_PT, exc))
     else:
-        print("  %s not found; hidden layers stay at random init" % BC_PT)
+        print(
+            "  %s not found; hidden layers stay at random init -- this does not"
+            " reproduce the published run's starting point" % BC_PT
+        )
 
     # Zero the output layer: ARS starts from the pure CMA-ES controller.
     model[4].weight.data.zero_()

@@ -1,0 +1,64 @@
+
+#################### NN ARS S35 START 2026-05-02 00:19:40 ####################
+  Base rule-based: 108.692s  (target to beat)
+=== Baseline evaluation (NN zeroed = pure rule-based) ===
+  Baseline warm lap: 300.000s
+  u=1  pair=1/4  +δ=300.000s  -δ=109.522s  best=300.000s  9min
+  >>> NEW BEST 109.522s  (saved models/nn_ars_s35_best.pt)
+  u=1  pair=2/4  +δ=109.188s  -δ=108.986s  best=109.522s  21min
+  >>> NEW BEST 109.188s  (saved models/nn_ars_s35_best.pt)
+  >>> NEW BEST 108.986s  (saved models/nn_ars_s35_best.pt)
+  u=1  pair=3/4  +δ=109.516s  -δ=108.192s  best=108.986s  32min
+  >>> NEW BEST 108.192s  (saved models/nn_ars_s35_best.pt)
+  u=1  pair=4/4  +δ=108.628s  -δ=110.200s  best=108.192s  43min
+  [Update 1] gen_best=108.192s  overall_best=108.192s  elapsed=43min
+  u=2  pair=1/4  +δ=110.178s  -δ=109.166s  best=108.192s  54min
+  u=2  pair=2/4  +δ=109.002s  -δ=110.054s  best=108.192s  65min
+  u=2  pair=3/4  +δ=109.998s  -δ=108.746s  best=108.192s  77min
+  u=2  pair=4/4  +δ=108.982s  -δ=110.154s  best=108.192s  88min
+  [Update 2] gen_best=108.746s  overall_best=108.192s  elapsed=88min
+  u=3  pair=1/4  +δ=108.704s  -δ=108.430s  best=108.192s  99min
+  u=3  pair=2/4  +δ=108.446s  -δ=108.110s  best=108.192s  110min
+  >>> NEW BEST 108.110s  (saved models/nn_ars_s35_best.pt)
+  u=3  pair=3/4  +δ=107.676s  -δ=109.802s  best=108.110s  121min
+  >>> NEW BEST 107.676s  (saved models/nn_ars_s35_best.pt)
+  u=3  pair=4/4  +δ=108.588s  -δ=108.526s  best=107.676s  133min
+  [Update 3] gen_best=107.676s  overall_best=107.676s  elapsed=133min
+  u=4  pair=1/4  +δ=107.630s  -δ=108.242s  best=107.676s  144min
+  >>> NEW BEST 107.630s  (saved models/nn_ars_s35_best.pt)
+  u=4  pair=2/4  +δ=107.446s  -δ=108.602s  best=107.630s  155min
+  >>> NEW BEST 107.446s  (saved models/nn_ars_s35_best.pt)
+  u=4  pair=3/4  +δ=107.984s  -δ=107.806s  best=107.446s  166min
+  u=4  pair=4/4  +δ=107.350s  -δ=108.366s  best=107.446s  177min
+  >>> NEW BEST 107.350s  (saved models/nn_ars_s35_best.pt)
+  [Update 4] gen_best=107.350s  overall_best=107.350s  elapsed=177min
+  u=5  pair=1/4  +δ=107.468s  -δ=107.650s  best=107.350s  188min
+  u=5  pair=2/4  +δ=107.070s  -δ=108.038s  best=107.350s  199min
+  >>> NEW BEST 107.070s  (saved models/nn_ars_s35_best.pt)
+  u=5  pair=3/4  +δ=107.206s  -δ=107.432s  best=107.070s  211min
+  u=5  pair=4/4  +δ=107.144s  -δ=107.454s  best=107.070s  222min
+  [Update 5] gen_best=107.070s  overall_best=107.070s  elapsed=222min
+  u=6  pair=1/4  +δ=107.070s  -δ=107.788s  best=107.070s  233min
+  u=6  pair=2/4  +δ=108.002s  -δ=107.312s  best=107.070s  244min
+  u=6  pair=3/4  +δ=107.376s  -δ=107.148s  best=107.070s  255min
+  u=6  pair=4/4  +δ=107.294s  -δ=107.358s  best=107.070s  265min
+  [Update 6] gen_best=107.070s  overall_best=107.070s  elapsed=265min
+  u=7  pair=1/4  +δ=107.460s  -δ=107.918s  best=107.070s  276min
+  u=7  pair=2/4  +δ=107.208s  -δ=107.686s  best=107.070s  287min
+  u=7  pair=3/4  +δ=107.324s  -δ=106.630s  best=107.070s  298min
+  >>> NEW BEST 106.630s  (saved models/nn_ars_s35_best.pt)
+  u=7  pair=4/4  +δ=107.794s  -δ=107.012s  best=106.630s  309min
+  [Update 7] gen_best=106.630s  overall_best=106.630s  elapsed=309min
+  u=8  pair=1/4  +δ=300.000s  -δ=108.206s  best=106.630s  317min
+  u=8  pair=2/4  +δ=106.932s  -δ=107.264s  best=106.630s  328min
+  u=8  pair=3/4  +δ=107.954s  -δ=108.274s  best=106.630s  339min
+  u=8  pair=4/4  +δ=106.958s  -δ=107.140s  best=106.630s  350min
+  [Update 8] gen_best=106.932s  overall_best=106.630s  elapsed=350min
+  u=9  pair=1/4  +δ=107.350s  -δ=106.910s  best=106.630s  361min
+  u=9  pair=2/4  +δ=107.526s  -δ=107.262s  best=106.630s  373min
+  u=9  pair=3/4  +δ=107.234s  -δ=107.252s  best=106.630s  384min
+  u=9  pair=4/4  +δ=106.876s  -δ=108.176s  best=106.630s  395min
+  [Update 9] gen_best=106.876s  overall_best=106.630s  elapsed=395min
+
+=== Done. Best warm lap: 106.630s ===
+Best model: models/nn_ars_s35_best.pt

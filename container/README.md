@@ -194,8 +194,15 @@ describe shapes that nothing here reads.
 
 ## Not covered here
 
-The 106.630 s residual-network result is not reproducible from this container
-yet: its trained weights were never committed to the repository. They should
-still exist on the original development machine, and bringing them and their
-dependencies here is tracked as issue #1. See the repository README. This
-directory reproduces the Stage 4 CMA-ES configuration only.
+The 106.630 s residual-network result has not been raced in this container.
+Its trained weights are no longer the obstacle — they were recovered from the
+development machine and are committed at `models/nn_ars_s35_best.pt`, with
+their provenance and integrity checks in `models/README.md`. What has not
+happened is the run: nothing here has driven the residual agent on any machine
+but the original one, so 106.630 s is a recorded measurement and not a
+container result. `run.sh --race` drives `--no-nn`, the Stage 4 CMA-ES
+configuration, which is the only configuration this directory has measured.
+
+Racing the residual agent here needs Torch inside the container, which the base
+image does not ship, and then a measured run to compare against. That is the
+remaining work on issue #1.

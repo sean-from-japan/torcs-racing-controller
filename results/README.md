@@ -1,8 +1,9 @@
 # Results — provenance
 
-Every file here was written by a training or benchmark script during the project. None
-of it was reconstructed or re-measured afterwards. Files were renamed to describe their
-stage; the original names are given so anything quoted here can be traced back.
+Every file here was written during the project, by a training or benchmark script or —
+in one case noted below — by hand from one of those scripts' output. None of it was
+reconstructed or re-measured afterwards. Files were renamed to describe their stage; the
+original names are given so anything quoted here can be traced back.
 
 `best_lap_2plus_s` is the metric throughout: the fastest lap from lap 2 onwards. Lap 1
 starts from rest and did not count in the league.
@@ -17,6 +18,8 @@ starts from rest and did not count in the league.
 | `stage3b_cma_6param_stable4lap.json` | `cma8h_phaseB_best.json` | 122.848 s | Same stage, 4 consecutive laps — the more robust individual |
 | `stage3c_cma_6param_tight_refine.json` | `cma_tight_best.json` | 122.164 s | Same stage, tight local refinement, 2 laps |
 | `stage4_cma_8param_sector_s35.json` | `cma_s35_best.json` | **108.692 s** | `+ K_final`, `switch_dist`, finish sprint, `C_s35` chicane cap |
+| `stage5_nn_ars_s35.json` | `nn_ars_s35_best.json` | **106.630 s** | Residual NN over stage 4, 33 output-layer parameters searched by ARS |
+| `stage5_nn_ars_training_log.txt` | `logs/nn_ars_s35_log.txt` | — | That run's own log, every evaluation it made |
 | `corkscrew_segments.json` | unchanged | — | Track geometry, extracted by `src/analyze_track.py` |
 | `lap_times_raw.csv` | `lap_times_all.csv` | — | Raw per-lap log, 572 records |
 
@@ -47,13 +50,26 @@ Both changes are present in `stage4_cma_8param_sector_s35.json` (`K_final`,
 `switch_dist`, `back_dist`), so the effect survives in the parameters even though the
 intermediate measurements do not.
 
-The residual-NN result of **106.630 s** likewise has no artefact here: the output-layer
-weights ARS converged on were never committed. They were not lost either — the file
-should still be on the machine the project was developed on, and publishing it is tracked
-as issue #1. The training loop that produces them is `src/train_nn_ars.py`, and it runs
-from `stage4_cma_8param_sector_s35.json` — what is missing from this repository is that
-run's output, not the means of producing one. See "Reproducing this" in the top-level
-README.
+The residual-NN result of **106.630 s** was in this list until the weights behind it were
+recovered from the development machine. It now has both artefacts: the run record in
+`stage5_nn_ars_s35.json` and the network itself in `models/nn_ars_s35_best.pt`.
+
+`stage5_nn_ars_s35.json` carries the stage-4 parameters as well as the ARS run's own
+fields, because the residual network does not replace the CMA-ES controller — it adds a
+bounded correction to it, so the run needed both. `nn_model` in that file points at the
+weights, and `base_lap_2plus_s` records the 108.692 s it improved on.
+
+`stage5_nn_ars_s35.json` is the one file here assembled by hand rather than written by a
+script: the ARS loop saved its weights and wrote its log, but never a summary JSON. The
+record was put together afterwards from that run's log and its base parameters, so
+`stage5_nn_ars_training_log.txt` is committed beside it as the primary source. Every
+number in the JSON is checkable against it — 106.630 s appears at update 7, pair 3, on
+the negative perturbation, and no later evaluation beat it, which is also why the saved
+`.pt` is that individual and not a subsequent one.
+
+One caveat belongs with the number rather than with the file: 106.630 s was measured on
+the original development machine and has not been reproduced elsewhere. See
+`models/README.md`.
 
 ## About `lap_times_raw.csv`
 

@@ -16,9 +16,13 @@ third_party/
 # Training run outputs
 runs/
 logs/
-models/
+models/*
 *.pkl
 *.pt
 *.pth
+# ...except the published residual-NN weights and their provenance note.
+# Keeping *.pt out of version control is what lost these in the first place.
+!models/README.md
+!models/nn_ars_s35_best.pt
 # Container run outputs (bridge checkout, TORCS logs, result records)
 container/out/

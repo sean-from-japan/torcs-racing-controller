@@ -10,12 +10,12 @@ which is the configuration the committed parameters in
     python src/run_eval.py                # + residual NN (needs weights)
 
 NOTE ON THE WEIGHTS: the 106.630 s figure requires the output-layer weights
-that ARS converged on in the recorded run.  Those weights are not committed
-here yet -- they should still be on the machine the project was developed on,
-and publishing them is tracked as issue #1 -- so this script cannot replay
-that exact lap from this repository alone.  The training loop that produces
-them is `train_nn_ars.py`, and it runs from the committed 108.692 s base.
-See README.md, "Reproducing this".
+that ARS converged on in the recorded run.  Those weights are now committed,
+as `models/nn_ars_s35_best.pt`, and this script loads them by default.  What
+is committed is the file, not a portable lap time: 106.630 s was measured on
+the original development machine and has not been reproduced on another host
+or in the pinned container.  Check the file with `src/verify_weights.py`;
+see `models/README.md` for what that does and does not establish.
 
 Why two runs: the ARS training loop always evaluated a candidate on the
 *second* reset of a session, and TORCS behaves differently on the first.
@@ -41,7 +41,7 @@ BASE_JSON = os.path.join(_REPO, "results", "stage4_cma_8param_sector_s35.json")
 DEFAULT_WEIGHTS = os.path.join(_REPO, "models", "nn_ars_s35_best.pt")
 
 DNF_PENALTY = 300.0
-RECORD_LAP = 106.630  # reported best; see README on reproducibility
+RECORD_LAP = 106.630  # measured on the original machine; see models/README.md
 
 
 def parse_args(argv=None):
@@ -68,9 +68,9 @@ def build_model(weights_path):
     if not os.path.exists(weights_path):
         raise SystemExit(
             "Residual NN weights not found: %s\n"
-            "The weights from the recorded 106.630 s run are not committed here\n"
-            "yet (see issue #1), so that exact lap cannot be replayed from this\n"
-            "repository alone.  Run with --no-nn to drive the CMA-ES controller\n"
+            "The weights from the recorded 106.630 s run are committed at\n"
+            "models/nn_ars_s35_best.pt -- if that path is missing, the checkout is\n"
+            "incomplete.  Run with --no-nn to drive the CMA-ES controller\n"
             "(108.692 s), or train a new residual network with train_nn_ars.py\n"
             "and pass it via --weights." % weights_path
         )

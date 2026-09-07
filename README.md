@@ -208,7 +208,7 @@ decision.
 | CMA-ES, 5 params | `K` (lookahead gain), `T` (throttle gain) | 124.148 s | [`stage2_cma_5param.json`](results/stage2_cma_5param.json) |
 | CMA-ES, 6 params | `D` (steering deadband) | 122.060 s | [`stage3_cma_6param_deadband.json`](results/stage3_cma_6param_deadband.json) |
 | CMA-ES, 8 params + s35 cap | `K_final`, `switch_dist`, `C_s35` | 108.692 s | [`stage4_cma_8param_sector_s35.json`](results/stage4_cma_8param_sector_s35.json) |
-| Residual NN + ARS | 33 network parameters | 106.630 s | trained weights not committed here yet — see [Reproducing this](#reproducing-this) |
+| Residual NN + ARS | 33 network parameters | 106.630 s | [`stage5_nn_ars_s35.json`](results/stage5_nn_ars_s35.json) + [`models/nn_ars_s35_best.pt`](models/nn_ars_s35_best.pt) |
 
 The controller is split into a steering subsystem and a speed subsystem so that the
 search space stays interpretable — when a stage regresses, you can tell which subsystem
@@ -339,12 +339,15 @@ several members' approaches, did not.
 
 ## Reproducing this
 
-The agent runs. One file is not in this repository: the output-layer weights the residual
-network converged on in the recorded run.
+Every stage in the table above now has a file behind it, the residual network included.
+What differs between them is not whether the artefact exists — it is where each number
+has been measured.
 
 **Runs today**, given TORCS and gym_torcs (see [Reproduction](#reproduction)):
 
 - the **108.692 s** CMA-ES controller — parameters are committed, `--no-nn` drives it
+- the **106.630 s** residual agent — `src/run_eval.py` loads
+  [`models/nn_ars_s35_best.pt`](models/nn_ars_s35_best.pt) by default
 - every earlier stage's parameters
 - [`src/train_nn_ars.py`](src/train_nn_ars.py), the ARS training loop that produced the
   106.630 s result, end to end from the committed 108.692 s base
@@ -352,31 +355,36 @@ network converged on in the recorded run.
 - all three track maps and the progression chart, from the committed results
 - the control law itself, via the test suite, with nothing installed at all
 
-**Not committed here yet:** `models/nn_ars_s35_best.pt` — the 33 output-layer weights
-from the 106.630 s run — was never committed (`*.pt` sat in `.gitignore`) and is in no
-branch of either project repository. It was not deleted, though: the file should still be
-on the Windows machine this project was developed on. What is holding it back is that the
-weights alone do not replay the lap, so I am establishing what else the run depends on —
-Torch version, the local gym_torcs snapshot, the hand-patched TORCS build, the race setup
-— before publishing something that would not load. Tracked as
-[issue #1](https://github.com/sean-from-japan/torcs-racing-controller/issues/1). In the
-meantime the file can be supplied on request, and the recorded lap is on video. Until it
-is here with the environment it needs, this repository on its own cannot replay that lap:
-`run_eval.py` says so and exits rather than pretend, and the chart marks that stage as
-having no committed artefact.
+**The weights, and what publishing them settles.** `models/nn_ars_s35_best.pt` — the 33
+output-layer parameters from the 106.630 s run, on top of the hidden layers they were
+searched over — spent four months outside version control, because `*.pt` sat in
+`.gitignore`. It was never lost, only unpublished, and it is now committed with its
+SHA-256 and a check that loads it and pins its output on fixed inputs:
 
-**Where it has been reproduced:** on the original development machine, and only there.
-The environment was never containerised (see [Limitations](#limitations)), so the
-residual-NN stage has not yet been run anywhere else — a portability gap, not a missing
-result. `container/` now pins the environment for the 108.692 s CMA-ES stage; the
-residual-NN stage needs the same treatment. If the weights turn out to be unusable, ARS can be re-run from the committed base, but that is a six-hour training job
-per attempt converging on its own weights and its own time — a fallback, not a quick
-regeneration.
+```bash
+python src/verify_weights.py --checksum-only   # bytes only, no Torch needed
+python src/verify_weights.py                   # + load and evaluate
+```
 
-That file is an output, not the method. Everything that produced it is here: the residual
-formulation, the zero-initialised output layer that guarantees a working starting policy,
-the 33-parameter search space, the excluded override zones, and the objective. Re-running
-it is a six-hour training job against the committed base, not a reconstruction.
+That settles the artefact. It does not settle the lap.
+[`models/README.md`](models/README.md) is the full record: what ARS searched, what came
+from a behaviour-cloning warm start, and what each check does and does not prove.
+
+**Where it has been reproduced:** on the original Windows machine, in May 2026, and
+nowhere since. The environment was never containerised (see
+[Limitations](#limitations)). `container/` pins the environment for the 108.692 s CMA-ES
+stage and has re-raced it — 108.538 s, five times, on a different machine and a different
+architecture. The residual-NN stage has not had that treatment, so **106.630 s is a
+recorded measurement, not a portable one**, and nothing here claims otherwise. Closing
+that gap is what is left on
+[issue #1](https://github.com/sean-from-japan/torcs-racing-controller/issues/1).
+
+The weights are an output, not the method. Everything that produced them is here: the
+residual formulation, the zero-initialised output layer that guarantees a working
+starting policy, the 33-parameter search space, the excluded override zones, and the
+objective. Re-running it is a six-hour training job against the committed base, not a
+reconstruction — and it converges on its own weights and its own time, which is why the
+file mattered.
 
 **Two intermediate figures** quoted in my project report — 116.062 s (8-param sector) and
 112.404 s (finish-straight sprint) — have no committed artefact either. They are omitted
@@ -493,12 +501,17 @@ league: I do not have access to the final standings and will not assert one.
 
 - **The environment was never containerised.** Development ran against a TORCS install on
   one machine, patched by hand — the nine `gym_torcs.py` edits under
-  [Reproduction](#reproduction) are a symptom of that. The code is portable and the training loop re-runs, but the environment it was
-  measured in exists only as instructions, and the one training artefact that fell
-  outside version control is still sitting on that machine rather than in this
-  repository. A Docker image pinning TORCS, the SCR server patch and the bridge would
-  have made both the training run and the recorded lap portable from the start, and it
-  is the first change I would make to this project.
+  [Reproduction](#reproduction) are a symptom of that. `container/` has since pinned that
+  environment and re-raced the CMA-ES stage on different hardware, but the residual-NN
+  stage has not been re-raced anywhere, so 106.630 s remains a single-machine
+  measurement. A container from the start would have made both the training run and the
+  recorded lap portable, and it is the first change I would make to this project.
+- **The trained weights were outside version control for four months.** `*.pt` was in
+  `.gitignore`, so the one artefact that could not be regenerated cheaply was the one
+  artefact not tracked. It survived on the development machine and is committed now
+  (see [`models/README.md`](models/README.md)), but that was luck, not process. What an
+  ignore rule excludes should be decided per-file when the file is an experimental
+  result.
 - **One track, one car, one race setup.** Every parameter is fitted to Corkscrew.
   `results/` contains no evidence of generalisation, and I would expect very little —
   the racing-line profiles and the s35 cap are hard-coded to specific distances on this
@@ -529,7 +542,9 @@ src/train_nn_ars.py       residual NN + ARS training loop
 src/analyze_track.py      TORCS track XML → segment table
 src/make_figure.py        results/ → figures/lap_time_progression.svg
 src/make_track_map.py     segments + parameters → the three Corkscrew track maps
+src/verify_weights.py     checksum + load check for the residual-NN weights
 src/torcs_env.py          locates the gym_torcs bridge; the only file that imports it
+models/nn_ars_s35_best.pt residual-NN weights from the 106.630 s run + provenance note
 results/                  measured parameters per stage + raw lap log + track segments
 docs/corkscrew_analysis.md  corner map used for the s35 diagnosis
 docs/PROVENANCE.md          origin of every file, what was excluded, what was checked

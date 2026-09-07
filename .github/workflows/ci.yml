@@ -33,6 +33,12 @@ jobs:
       - name: Byte-compile every script
         run: python -m compileall -q src tests container
 
+      # The residual-NN weights are the one committed artefact a reader cannot
+      # check by eye.  Torch is not installed here, so CI pins the bytes; the
+      # load-and-evaluate half of the same script needs Torch and is local.
+      - name: Verify the residual-NN weights
+        run: python src/verify_weights.py --checksum-only
+
       - name: Regenerate the figures from results/
         shell: bash
         run: |
