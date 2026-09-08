@@ -102,8 +102,9 @@ simulator between measurements.
 ## How the container run differs
 
 [`container/`](../container/README.md) reproduces the 108.692 s CMA-ES stage, at
-108.538 s, five times. That is the only lap in this repository measured anywhere but the
-machine above — and it was measured under a different setup, not the same one:
+108.538 s, five times. On 2026-09-08 it also ran the recovered residual network at
+107.082 s and 107.416 s over two warm laps. These were measured under a different setup
+from the development machine, not the same one:
 
 | | Development machine | Container |
 |---|---|---|
@@ -118,17 +119,17 @@ So 108.538 s is a re-measurement of the *controller*, not a re-measurement under
 be if the conditions were identical — but it is not a like-for-like comparison, and it
 is not a tolerance.
 
-One thing worth checking before treating the container as equivalent: the car. The
-development machine ran `scr_server` index 0, which is `car1-ow1`; indices 1–9 select
-`car1-trb1`, a substantially different vehicle. `container/configure_race.py` sets the
-driver module and leaves the index as the image installed it. The 0.15 s agreement is
-strong circumstantial evidence that both ran `car1-ow1` — a different car would not land
-that close — but the index has not been read directly, and it should be.
+The car was checked directly after the residual run on 2026-09-08. The generated
+`practice.xml` has one driver entry, `scr_server` with `idx=0`, which selects
+`car1-ow1`. That matches the development machine; indices 1–9 would select the
+substantially different `car1-trb1`.
 
 ## What is not controlled anywhere
 
-- **No repeat measurements at the residual-NN stage.** 106.630 s has one observation
-  behind it.
+- **No repeat measurement of the original 106.630 s result.** It has one training
+  observation behind it. The later pinned-container run has two warm laps — 107.082 s
+  and 107.416 s — under the different conditions above, so it establishes portability
+  rather than an exact reproduction.
 - **One track, one car, one setup.** Every parameter is fitted to Corkscrew; `results/`
   contains no evidence of generalisation.
 - **No independent verification.** Every number here was measured by this project's own

@@ -1,0 +1,52 @@
+{
+  "recorded_utc": "2026-09-08T05:20:46Z",
+  "note": "First residual-NN measurement in the pinned container; one cold lap and two warm laps.",
+  "result": {
+    "laps_s": [
+      114.13,
+      107.082,
+      107.416
+    ],
+    "best_warm_lap_s": 107.082,
+    "reference_s": 106.63
+  },
+  "controller": {
+    "commit": "e89799fd138e90b76962f20988be0ef07882c0bf",
+    "dirty": false,
+    "configuration": "residual",
+    "parameters": "results/stage4_cma_8param_sector_s35.json",
+    "weights": {
+      "path": "models/nn_ars_s35_best.pt",
+      "sha256": "03f489840cc039e89378dcd10a9f42e8d18fad1047e80c295fde4ab2252be5e5"
+    }
+  },
+  "bridge": {
+    "upstream": "https://github.com/ugo-nama-kun/gym_torcs",
+    "upstream_commit": "da5d6ddec3a35718fea89dc1c05037743173c668",
+    "prepared_by": "container/prepare_bridge.py",
+    "files_sha256": {
+      "LICENSE": "06e4bf7535a1b1f88e5fe7467aeb5c41b9ad9e2915e508d39b43a0b9fc9af0ef",
+      "autostart.sh": "faeada8967d74935794c0177134fa7acdd4ab20a6dcffb84c1c39df08340e11f",
+      "gym_torcs.py": "37c91e3d55f781373388e2c3bbd438891dd154016ae7c9340ccad6af8f0a69de",
+      "snakeoil3_gym.py": "6e7963e364fc23dcb1987604666966862e01977ef3636c6e7b5c79099d69dbba"
+    }
+  },
+  "image": {
+    "repository": "docker.io/johnsloe/torcs-competition",
+    "digest": "sha256:fed57137c217a524ead2281dd085179066be373c1ffbc8c82880ee85ae07c4b9"
+  },
+  "environment": {
+    "container": {
+      "machine": "aarch64",
+      "platform": "Linux-6.8.0-117-generic-aarch64-with-glibc2.35",
+      "python": "3.10.12",
+      "packages": {
+        "numpy": "2.2.6",
+        "gym": "0.26.2",
+        "torch": "2.10.0+cpu"
+      }
+    },
+    "host": "Darwin 25.6.0 arm64",
+    "engine": "docker Docker version 29.7.2, build a7dcaa6fdb"
+  }
+}
