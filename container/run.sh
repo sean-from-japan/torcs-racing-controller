@@ -120,12 +120,18 @@ if [ "$ACTION" = "--race" ]; then
     echo
     echo "controller: $RACE_MODE"
     # The container cannot see the machine it is running on; pass it through so
-    # the result record says what the lap was measured on.
+    # the result record says what the lap was measured on. A linked Git worktree
+    # also keeps its gitdir outside this bind mount, so pass the revision too.
     HOST_DESC="$(uname -s) $(uname -r) $(uname -m)"
+    CONTROLLER_COMMIT="$(git -C "$REPO" rev-parse HEAD)"
+    CONTROLLER_DIRTY=0
+    [ -n "$(git -C "$REPO" status --porcelain)" ] && CONTROLLER_DIRTY=1
     "$ENGINE" exec \
         -e "TORCS_HOST_DESCRIPTION=$HOST_DESC" \
         -e "TORCS_ENGINE=$ENGINE $("$ENGINE" --version 2>/dev/null | head -1)" \
         -e "TORCS_CONTROLLER_MODE=$RACE_MODE" \
+        -e "TORCS_CONTROLLER_COMMIT=$CONTROLLER_COMMIT" \
+        -e "TORCS_CONTROLLER_DIRTY=$CONTROLLER_DIRTY" \
         "$NAME" bash -lc \
         'bash /home/student/workspace/controller/container/race.sh'
 else
