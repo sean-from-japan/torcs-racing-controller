@@ -38,7 +38,9 @@ def git(*args, cwd=_REPO):
         out = subprocess.run(
             ("git",) + args, cwd=cwd, capture_output=True, text=True, timeout=10
         )
-        return out.stdout.strip() or None
+        if out.returncode != 0:
+            return None
+        return out.stdout.strip()
     except (OSError, subprocess.SubprocessError):
         return None
 
@@ -98,6 +100,14 @@ def main(argv=None):
     with open(os.path.join(_HERE, "image-lock.json")) as f:
         lock = json.load(f)
 
+    commit = git("rev-parse", "HEAD") or os.environ.get("TORCS_CONTROLLER_COMMIT")
+    status = git("status", "--porcelain")
+    if status is None:
+        dirty_env = os.environ.get("TORCS_CONTROLLER_DIRTY")
+        dirty = None if dirty_env is None else dirty_env == "1"
+    else:
+        dirty = bool(status)
+
     bridge_files = {}
     for name in sorted(os.listdir(args.bridge)):
         path = os.path.join(args.bridge, name)
@@ -109,8 +119,8 @@ def main(argv=None):
         "note": args.note,
         "result": result,
         "controller": {
-            "commit": git("rev-parse", "HEAD"),
-            "dirty": bool(git("status", "--porcelain")),
+            "commit": commit,
+            "dirty": dirty,
             "configuration": args.controller,
             "parameters": "results/stage4_cma_8param_sector_s35.json",
         },

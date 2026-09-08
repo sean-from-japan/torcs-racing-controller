@@ -1,5 +1,7 @@
 import importlib.util
 import os
+import subprocess
+import tempfile
 import unittest
 
 
@@ -33,6 +35,18 @@ RESULTS
 """
         result = record_result.parse_log(log)
         self.assertEqual(result["reference_s"], 108.692)
+
+
+class TestGitHelper(unittest.TestCase):
+    def test_clean_repository_returns_empty_status_not_none(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            subprocess.run(("git", "init", "-q", tmp), check=True)
+            self.assertEqual(
+                record_result.git("status", "--porcelain", cwd=tmp), ""
+            )
+
+    def test_failed_git_command_returns_none(self):
+        self.assertIsNone(record_result.git("not-a-real-command"))
 
 
 if __name__ == "__main__":
