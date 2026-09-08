@@ -209,3 +209,22 @@ inputs. Its run log and result record are written separately as
 `container/out/run_eval_residual.log` and
 `container/out/result_residual.json`; the default CMA-ES run keeps using
 `container/out/run_eval.log` and `container/out/result.json`.
+
+The first pinned-container measurement, on 2026-09-08, completed with:
+
+| | |
+|---|---|
+| Host | macOS 26.6.2, Apple Silicon, Colima |
+| Image | the same pinned arm64 image used for the Stage 4 measurement |
+| Cold lap | 114.130 s |
+| Warm laps | 107.082 s, 107.416 s |
+| **Best warm lap** | **107.082 s** |
+| Historical residual-NN reference | 106.630 s (+0.452 s) |
+| Container CMA-ES-only result | 108.538 s (−1.456 s) |
+
+The result record is committed as
+[`results/stage5_nn_ars_container_2026-09-08.json`](../results/stage5_nn_ars_container_2026-09-08.json).
+This one run establishes that the recovered network loads, completes laps, and improves
+the Stage 4 controller in the pinned environment. It does not reproduce 106.630 s
+exactly, establish a distribution, or make the container and original Windows race
+conditions equivalent.

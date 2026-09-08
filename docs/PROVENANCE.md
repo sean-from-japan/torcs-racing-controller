@@ -75,6 +75,9 @@ well, in the organiser's pinned container on Apple Silicon:
 | Same, against the bridge rebuilt by `container/prepare_bridge.py` from clean upstream | identical: 114.130 s cold, **108.538 s** best warm |
 | Same, fully automated from a fresh container via `container/run.sh --race` | identical again |
 | `python -m unittest discover -s tests` after the container work | 46 passed |
+| `container/run.sh --race --nn` on 2026-09-08 | 114.130 s cold; 107.082 s and 107.416 s warm; published weight SHA recorded |
+| Container `practice.xml` after that run | one `scr_server` driver with `idx=0`, selecting the same `car1-ow1` as the development machine |
+| `python -m unittest discover -s tests` after adding residual-container support | 50 passed |
 
 Running it turned up one real defect: `src/run_eval.py` never cleared `sys.argv`, and
 `snakeoil3_gym.Client` re-parses `sys.argv` with `getopt` when it is constructed. Every
@@ -106,9 +109,10 @@ Comparing it against that machine settled two things beyond its integrity:
 `bc_keff.pt` itself is not published. It is an input to retraining, not to the recorded
 lap, and the script that produced it is among the excluded working material.
 
-What this does **not** establish is the lap time. 106.630 s was measured on the original
-Windows machine in May 2026 and has not been reproduced on another host or in the pinned
-container, which races the CMA-ES stage only.
+What this does **not** establish is the exact lap time. The pinned arm64 container raced
+the recovered network on 2026-09-08 and reached 107.082 s, not the 106.630 s measured on
+the original Windows machine. The committed result record identifies the controller
+commit, weight SHA-256, bridge files, image digest, packages and host.
 
 ## The gym_torcs bridge
 

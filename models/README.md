@@ -81,18 +81,18 @@ Verified, here, today:
   `src/verify_weights.py`
 - the observation vector and scaling in `src/controller.py` are identical to the ones
   the private runner used, so the file is being fed what it was trained on
+- the published file drove the pinned arm64 container to warm laps of 107.082 s and
+  107.416 s on 2026-09-08, improving on that container's 108.538 s CMA-ES-only result
 
-**Not verified: the lap time.** 106.630 s was measured on the original Windows machine
-in May 2026 and has not been reproduced since — not on another host, and not in the
-pinned container, which so far races the CMA-ES stage only. It is also the best of the
-72 evaluations the ARS loop made rather than a separate benchmark run, and it was
-measured solo on the grid with damage off.
+**Not reproduced exactly: the lap time.** 106.630 s was measured on the original Windows
+machine in May 2026. The pinned-container best is 107.082 s, 0.452 s slower. The original
+number is also the best of the 72 evaluations the ARS loop made rather than a separate
+benchmark run, and it was measured solo on the grid with damage off.
 [`docs/RACE_CONDITIONS.md`](../docs/RACE_CONDITIONS.md) records that setup in full and
 says plainly what a maximum over noisy draws is worth. Publishing the weights removes
-the missing-artefact problem; it does not by itself make the lap portable, and this file
-should not be read as a claim that it is. See
-[`container/README.md`](../container/README.md) for what the container has and has not
-reproduced, and issue #1 for the remaining work.
+the missing-artefact problem, and the container run makes the controller portable; it
+does not turn 106.630 s into a portable exact measurement. See the committed container
+record in `results/` and [`container/README.md`](../container/README.md).
 
 The Torch version used for training was not recorded. The file carries
 `.format_version` and a 64-byte storage alignment, which PyTorch began writing in 2.6,

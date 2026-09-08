@@ -377,14 +377,14 @@ That settles the artefact. It does not settle the lap.
 [`models/README.md`](models/README.md) is the full record: what ARS searched, what came
 from a behaviour-cloning warm start, and what each check does and does not prove.
 
-**Where it has been reproduced:** on the original Windows machine, in May 2026, and
-nowhere since. The environment was never containerised (see
-[Limitations](#limitations)). `container/` pins the environment for the 108.692 s CMA-ES
-stage and has re-raced it — 108.538 s, five times, on a different machine and a different
-architecture. The residual-NN stage has not had that treatment, so **106.630 s is a
-recorded measurement, not a portable one**, and nothing here claims otherwise. Closing
-that gap is what is left on
-[issue #1](https://github.com/sean-from-japan/torcs-racing-controller/issues/1).
+**Where it has been run:** first on the original Windows machine in May 2026, then in
+the pinned arm64 container on 2026-09-08. The container run produced warm laps of
+107.082 s and 107.416 s: its 107.082 s best was 0.452 s slower than the historical
+106.630 s, but 1.456 s faster than the same container's 108.538 s CMA-ES-only result.
+That makes the recovered controller portable and confirms that its residual correction
+improves the committed base in this environment. It does **not** reproduce the exact
+106.630 s, which remains one training evaluation under the original setup. The complete
+record is [`stage5_nn_ars_container_2026-09-08.json`](results/stage5_nn_ars_container_2026-09-08.json).
 
 The weights are an output, not the method. Everything that produced them is here: the
 residual formulation, the zero-initialised output layer that guarantees a working
@@ -426,9 +426,10 @@ bash container/run.sh --race --nn     # residual-NN controller on Corkscrew
 
 Steps 1–3 need only a Python interpreter. Step 4 needs a container engine and about
 25 GB of free disk; it pulls a pinned image, rebuilds the simulator bridge from
-upstream sources, puts TORCS on the grid, and writes a result record. Measured on
-an Apple Silicon Mac on 2026-09-02: **108.538 s** best warm lap, against the
-historical 108.692 s reference. [`container/README.md`](container/README.md) has the
+upstream sources, puts TORCS on the grid, and writes a result record. On an Apple
+Silicon Mac, the CMA-ES controller reached **108.538 s** on 2026-09-02 and the
+recovered residual-NN controller reached **107.082 s** on 2026-09-08.
+[`container/README.md`](container/README.md) has the
 full account, including what is and is not reproducible.
 
 To drive it against your own TORCS install instead:
@@ -510,10 +511,11 @@ league: I do not have access to the final standings and will not assert one.
 - **The environment was never containerised.** Development ran against a TORCS install on
   one machine, patched by hand — the nine `gym_torcs.py` edits under
   [Reproduction](#reproduction) are a symptom of that. `container/` has since pinned that
-  environment and re-raced the CMA-ES stage on different hardware, but the residual-NN
-  stage has not been re-raced anywhere, so 106.630 s remains a single-machine
-  measurement. A container from the start would have made both the training run and the
-  recorded lap portable, and it is the first change I would make to this project.
+  environment and has since raced both the CMA-ES and residual-NN stages on different
+  hardware. The setup is not like-for-like with the original Windows Quick Race, and
+  the residual run reached 107.082 s rather than 106.630 s, so the original record
+  remains a single training observation rather than a portable exact time. A container
+  from the start would have made that comparison much stronger.
 - **The trained weights were outside version control for four months.** `*.pt` was in
   `.gitignore`, so the one artefact that could not be regenerated cheaply was the one
   artefact not tracked. It survived on the development machine and is committed now
