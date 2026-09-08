@@ -421,6 +421,7 @@ python src/analyze_track.py --xml /path/to/torcs/tracks/road/corkscrew/corkscrew
 # 4. Drive it, in the organiser's pinned container (see container/README.md)
 bash container/build.sh               # once: bake the bridge into a derived image
 bash container/run.sh --race          # CMA-ES controller on Corkscrew
+bash container/run.sh --race --nn     # residual-NN controller on Corkscrew
 ```
 
 Steps 1–3 need only a Python interpreter. Step 4 needs a container engine and about

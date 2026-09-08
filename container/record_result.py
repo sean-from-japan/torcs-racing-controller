@@ -59,7 +59,11 @@ def parse_log(text):
     # run and any retried attempts, which are not part of the measurement.
     laps = re.search(r"all laps      : \[([^\]]*)\]", text)
     best = re.search(r"best warm lap : ([0-9.]+) s", text)
-    ref = re.search(r"measured ([0-9.]+) s\)", text)
+    # New logs print the active controller's target explicitly. Fall back to
+    # the older parameter-line wording so historical CMA-ES logs still parse.
+    ref = re.search(r"target\s*: ([0-9.]+) s", text)
+    if not ref:
+        ref = re.search(r"measured ([0-9.]+) s\)", text)
     return {
         "laps_s": [float(x) for x in re.findall(r"[0-9.]+", laps.group(1))] if laps else [],
         "best_warm_lap_s": float(best.group(1)) if best else None,
@@ -72,8 +76,20 @@ def main(argv=None):
     ap.add_argument("--log", required=True, help="captured run_eval.py output")
     ap.add_argument("--bridge", required=True, help="prepared gym_torcs directory")
     ap.add_argument("--out", required=True, help="where to write the record")
+    ap.add_argument(
+        "--controller",
+        choices=("cma", "residual"),
+        default="cma",
+        help="controller configuration that produced the log",
+    )
+    ap.add_argument("--weights", default=None, help="residual-NN weights, if used")
     ap.add_argument("--note", default=None, help="free-text note about this run")
     args = ap.parse_args(argv)
+
+    if args.controller == "residual" and not args.weights:
+        ap.error("--weights is required when --controller residual")
+    if args.weights and not os.path.isfile(args.weights):
+        ap.error("weights file not found: %s" % args.weights)
 
     with open(args.log, encoding="utf-8", errors="replace") as f:
         log = f.read()
@@ -95,6 +111,7 @@ def main(argv=None):
         "controller": {
             "commit": git("rev-parse", "HEAD"),
             "dirty": bool(git("status", "--porcelain")),
+            "configuration": args.controller,
             "parameters": "results/stage4_cma_8param_sector_s35.json",
         },
         "bridge": {
@@ -122,6 +139,12 @@ def main(argv=None):
             "engine": os.environ.get("TORCS_ENGINE"),
         },
     }
+
+    if args.weights:
+        record["controller"]["weights"] = {
+            "path": os.path.relpath(os.path.abspath(args.weights), _REPO),
+            "sha256": sha256(args.weights),
+        }
 
     os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
     with open(args.out, "w", encoding="utf-8") as f:

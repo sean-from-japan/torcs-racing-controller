@@ -3,6 +3,7 @@
 #
 #   bash container/run.sh              # start it (or reuse a running one)
 #   bash container/run.sh --race       # start it and run one measured lap
+#   bash container/run.sh --race --nn  # run the residual-NN controller
 #   bash container/run.sh --stop       # stop and remove it
 #
 # The image is the organiser's, pinned by digest per architecture in
@@ -17,6 +18,23 @@ REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LOCK="$REPO/container/image-lock.json"
 NAME="${CONTAINER_NAME:-torcs}"
 OUT_HOST="${OUT_HOST:-$REPO/container/out}"
+
+ACTION="${1:-}"
+RACE_MODE=cma
+if [ "$ACTION" = "--race" ]; then
+    case "${2:-}" in
+        "") ;;
+        --nn) RACE_MODE=residual ;;
+        *) echo "Usage: bash container/run.sh [--race [--nn] | --stop]" >&2; exit 2 ;;
+    esac
+    [ "$#" -le 2 ] || {
+        echo "Usage: bash container/run.sh [--race [--nn] | --stop]" >&2
+        exit 2
+    }
+elif [ -n "$ACTION" ] && [ "$ACTION" != "--stop" ]; then
+    echo "Usage: bash container/run.sh [--race [--nn] | --stop]" >&2
+    exit 2
+fi
 
 ENGINE="${ENGINE:-}"
 if [ -z "$ENGINE" ]; then
@@ -46,7 +64,7 @@ if not img.get('digest'):
 print('%s/%s@%s' % (lock['registry'], lock['repository'], img['digest']))
 ")"
 
-if [ "${1:-}" = "--stop" ]; then
+if [ "$ACTION" = "--stop" ]; then
     "$ENGINE" rm -f "$NAME" >/dev/null 2>&1 || true
     echo "stopped $NAME"
     exit 0
@@ -98,20 +116,24 @@ echo
 echo "desktop : http://localhost:6080/vnc.html"
 echo "output  : $OUT_HOST"
 
-if [ "${1:-}" = "--race" ]; then
+if [ "$ACTION" = "--race" ]; then
     echo
+    echo "controller: $RACE_MODE"
     # The container cannot see the machine it is running on; pass it through so
     # the result record says what the lap was measured on.
     HOST_DESC="$(uname -s) $(uname -r) $(uname -m)"
     "$ENGINE" exec \
         -e "TORCS_HOST_DESCRIPTION=$HOST_DESC" \
         -e "TORCS_ENGINE=$ENGINE $("$ENGINE" --version 2>/dev/null | head -1)" \
+        -e "TORCS_CONTROLLER_MODE=$RACE_MODE" \
         "$NAME" bash -lc \
         'bash /home/student/workspace/controller/container/race.sh'
 else
     echo
     echo "Run one measured lap with:"
     echo "  bash container/run.sh --race"
+    echo "Run the residual-NN controller with:"
+    echo "  bash container/run.sh --race --nn"
     echo "Build the derived image (bakes in the bridge, no network per run):"
     echo "  bash container/build.sh"
     echo "or step through it yourself:"
