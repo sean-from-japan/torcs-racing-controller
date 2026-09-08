@@ -5,7 +5,8 @@
 # gym_torcs bridge from clean upstream, points TORCS' practice race at Corkscrew
 # and scr_server, puts TORCS on the grid, and runs the controller against it.
 #
-#   bash container/race.sh              # measured --no-nn run
+#   bash container/race.sh              # measured CMA-ES-only run
+#   TORCS_CONTROLLER_MODE=residual bash container/race.sh
 #   bash container/race.sh --prepare    # set everything up, do not race
 #
 # Everything it writes goes under $OUT_DIR (default /home/student/workspace/out).
@@ -26,6 +27,25 @@ export DISPLAY
 PREPARE_ONLY=0
 [ "${1:-}" = "--prepare" ] && PREPARE_ONLY=1
 
+CONTROLLER_MODE="${TORCS_CONTROLLER_MODE:-cma}"
+case "$CONTROLLER_MODE" in
+    cma|residual) ;;
+    *) echo "TORCS_CONTROLLER_MODE must be 'cma' or 'residual'" >&2; exit 2 ;;
+esac
+
+EVAL_ARGS=(--no-wait)
+RESULT_LOG="$OUT_DIR/run_eval.log"
+RESULT_JSON="$OUT_DIR/result.json"
+RECORD_ARGS=(--controller "$CONTROLLER_MODE")
+if [ "$CONTROLLER_MODE" = "cma" ]; then
+    EVAL_ARGS=(--no-nn --no-wait)
+else
+    WEIGHTS="$REPO/models/nn_ars_s35_best.pt"
+    RESULT_LOG="$OUT_DIR/run_eval_residual.log"
+    RESULT_JSON="$OUT_DIR/result_residual.json"
+    RECORD_ARGS+=(--weights "$WEIGHTS")
+fi
+
 mkdir -p "$OUT_DIR"
 
 echo "== 1/5  Python dependencies"
@@ -38,6 +58,9 @@ python3 - <<'PY'
 import gym, numpy, sys
 print("   python %s | gym %s | numpy %s" % (sys.version.split()[0], gym.__version__, numpy.__version__))
 PY
+if [ "$CONTROLLER_MODE" = "residual" ]; then
+    python3 "$REPO/src/verify_weights.py"
+fi
 
 echo "== 2/5  gym_torcs bridge"
 if [ "${TORCS_BRIDGE_PREBUILT:-0}" = "1" ] && [ -f "$BRIDGE_DIR/gym_torcs.py" ]; then
@@ -129,16 +152,18 @@ echo "   TORCS is on the grid, waiting on UDP 3001"
 if [ "$PREPARE_ONLY" = "1" ]; then
     echo
     echo "Prepared.  Race it with:"
-    echo "  cd $REPO && GYM_TORCS_DIR=$BRIDGE_DIR python3 -m src.run_eval --no-nn --no-wait"
+    echo "  cd $REPO && GYM_TORCS_DIR=$BRIDGE_DIR python3 -m src.run_eval ${EVAL_ARGS[*]}"
     exit 0
 fi
 
 echo "== 5/5  measured run"
+echo "   controller: $CONTROLLER_MODE"
 cd "$REPO"
-GYM_TORCS_DIR="$BRIDGE_DIR" python3 -u -m src.run_eval --no-nn --no-wait \
-    2>&1 | tee "$OUT_DIR/run_eval.log"
+GYM_TORCS_DIR="$BRIDGE_DIR" python3 -u -m src.run_eval "${EVAL_ARGS[@]}" \
+    2>&1 | tee "$RESULT_LOG"
 
 python3 "$REPO/container/record_result.py" \
-    --log "$OUT_DIR/run_eval.log" \
+    --log "$RESULT_LOG" \
     --bridge "$BRIDGE_DIR" \
-    --out "$OUT_DIR/result.json"
+    --out "$RESULT_JSON" \
+    "${RECORD_ARGS[@]}"

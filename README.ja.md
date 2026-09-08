@@ -212,7 +212,8 @@ python src/analyze_track.py --xml /path/to/torcs/tracks/road/corkscrew/corkscrew
 
 ```bash
 bash container/build.sh
-bash container/run.sh --race
+bash container/run.sh --race       # CMA-ES制御器
+bash container/run.sh --race --nn  # 残差NN制御器
 ```
 
 2026-09-02にApple SiliconのMacで実測したところ、ウォームラップの最良タイムは**108.538秒**でした（記録上の基準値は108.692秒です）。手元のTORCSに対して走らせる手順を含め、詳しくは [`container/README.md`](container/README.md) と [Reproduction](README.md#reproduction) をご覧ください。

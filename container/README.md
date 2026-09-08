@@ -7,7 +7,8 @@ command against a pinned container image.
 
 ```bash
 bash container/build.sh     # once: bake the bridge into a derived image
-bash container/run.sh --race
+bash container/run.sh --race       # Stage 4 CMA-ES controller
+bash container/run.sh --race --nn  # Stage 5 residual-NN controller
 ```
 
 `build.sh` builds a thin image on top of the pinned base with the simulator
@@ -45,7 +46,7 @@ What is reproducible from source in this repository:
 | The gym_torcs bridge | `prepare_bridge.py`, from a pinned upstream commit, with every edit anchored to exact upstream text |
 | The race setup | `configure_race.py`, editing TORCS' own generated config in place |
 | Putting TORCS on the grid | `race.sh`, deterministic menu walk with verification and retries |
-| The measurement | `src/run_eval.py --no-nn` against the committed Stage 4 parameters |
+| The measurement | `src/run_eval.py`, with an explicit CMA-ES or residual-NN mode |
 | What was measured, and on what | `record_result.py` |
 
 ### Why the derived image is worth building
@@ -183,7 +184,8 @@ On the stock base image, `race.sh` installs `gym==0.26.2` on first use and build
 the bridge. On the derived image both are already present and it skips straight
 to the race. `gym` is the one dependency the base image does not ship; it is
 unmaintained and warns about NumPy 2, but the bridge only uses `gym.spaces` to
-describe shapes that nothing here reads.
+describe shapes that nothing here reads. The pinned base already contains
+PyTorch 2.10.0+cpu, so the residual network needs no additional image layer.
 
 ## Notes on things that did not work
 
@@ -198,17 +200,12 @@ describe shapes that nothing here reads.
   mounts as an empty directory and `race.sh` is reported missing. Keep the clone
   under `$HOME`, or add the path with `colima start --mount`.
 
-## Not covered here
+## Residual-network run
 
-The 106.630 s residual-network result has not been raced in this container.
-Its trained weights are no longer the obstacle — they were recovered from the
-development machine and are committed at `models/nn_ars_s35_best.pt`, with
-their provenance and integrity checks in `models/README.md`. What has not
-happened is the run: nothing here has driven the residual agent on any machine
-but the original one, so 106.630 s is a recorded measurement and not a
-container result. `run.sh --race` drives `--no-nn`, the Stage 4 CMA-ES
-configuration, which is the only configuration this directory has measured.
-
-Racing the residual agent here needs Torch inside the container, which the base
-image does not ship, and then a measured run to compare against. That is the
-remaining work on issue #1.
+The recovered 106.630 s residual network can be measured with
+`bash container/run.sh --race --nn`. Before TORCS starts, the command verifies
+`models/nn_ars_s35_best.pt` by SHA-256 and by evaluating the network on fixed
+inputs. Its run log and result record are written separately as
+`container/out/run_eval_residual.log` and
+`container/out/result_residual.json`; the default CMA-ES run keeps using
+`container/out/run_eval.log` and `container/out/result.json`.
