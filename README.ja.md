@@ -216,7 +216,7 @@ bash container/run.sh --race       # CMA-ES制御器
 bash container/run.sh --race --nn  # 残差NN制御器
 ```
 
-Apple SiliconのMac上で、CMA-ES単体は2026-09-02に**108.538秒**、残差NNは2026-09-08に**107.082秒**を記録しました。手元のTORCSに対して走らせる手順を含め、詳しくは [`container/README.md`](container/README.md) と [Reproduction](README.md#reproduction) をご覧ください。
+Apple SiliconのMac上で、CMA-ES単体は2026-09-02に**108.538秒**、残差NNは2026-09-08に**107.082秒**を記録しました。手元のTORCSに対して走らせる手順、コンテナの中に入っている範囲の図、学習をコンテナ化していない理由は [`container/README.ja.md`](container/README.ja.md) にまとめてあります（英語版は [`container/README.md`](container/README.md)、全体の再現手順は [Reproduction](README.md#reproduction) です）。
 
 ## 重みの公開と、まだ確かめられていないこと
 

@@ -1,5 +1,7 @@
 # Running the controller against real TORCS
 
+**English** | [日本語](README.ja.md)
+
 The controller and its tests run anywhere. Actually *driving* it needs TORCS, the
 SCR server patch, and a specific gym_torcs bridge — a 2013-era simulator stack
 that is unpleasant to assemble by hand. This directory reduces that to one
@@ -25,6 +27,34 @@ image, fetching the bridge and `gym` at run time instead.
 This is a **derived image on a pinned base**, not a container reproducible from
 source end to end.
 
+### What is inside the container, and what is not
+
+```mermaid
+flowchart LR
+    subgraph outside["Never containerised - one Windows laptop, one TORCS install"]
+        train["CMA-ES stages 1-4, then ARS stage 5<br/>every evaluation is a real lap in real time<br/>6 h and 72 evaluations for the residual network"]
+    end
+
+    subgraph host["Host - macOS on Apple Silicon, Colima"]
+        repo["This repository, bind-mounted<br/>src/ - models/ - container/ - tests/"]
+        out["container/out/<br/>TORCS log - run log - result record"]
+    end
+
+    subgraph derived["Derived image - build.sh, +7.1 MB, built locally, never pushed"]
+        add["gym 0.26.2<br/>gym_torcs bridge: 9 edits from a pinned commit, SHA-256 verified<br/>TORCS race config: Corkscrew, scr_server, Practice"]
+        subgraph base["Pinned base image - identified by digest, build definition not public"]
+            b["TORCS + SCR server patch - XFCE and noVNC desktop<br/>PyTorch 2.10.0+cpu - NumPy - 17.9 GB unpacked"]
+        end
+    end
+
+    train -->|"models/nn_ars_s35_best.pt<br/>committed, pinned by SHA-256"| repo
+    repo -->|"run.sh --race"| derived
+    derived -->|"lap times and provenance"| out
+```
+
+The measured lap is fully inside the container. The search that produced the
+parameters and the weights it measures is not, and never was.
+
 The base image is the competition organiser's, published on Docker Hub. Its own
 build definition is not public, so it can be *identified* exactly — by digest,
 never by `:latest` — but not rebuilt. Everything layered on top of it is in
@@ -48,6 +78,30 @@ What is reproducible from source in this repository:
 | Putting TORCS on the grid | `race.sh`, deterministic menu walk with verification and retries |
 | The measurement | `src/run_eval.py`, with an explicit CMA-ES or residual-NN mode |
 | What was measured, and on what | `record_result.py` |
+
+### Why training is not in the container
+
+The container reproduces a *measurement*. It has never run a *training*, and the
+boundary is deliberate:
+
+- **The container came second.** `container/` was written on 2026-09-02, after the
+  CMA-ES and ARS runs had already finished on the development laptop.
+  Containerising the search now would not retroactively pin the environment that
+  produced 106.630 s.
+- **Every evaluation is a real lap in real time.** The residual network took 72
+  evaluations over six hours; the CMA-ES stages have the same shape. That is a
+  supervised session lasting hours, not a single command.
+- **The run path is single-shot by construction.** `race.sh` starts TORCS, walks
+  the GUI menu onto the grid (three attempts), and calls `src/run_eval.py` once.
+  The bridge deliberately raises `ConnectionError` rather than relaunching TORCS
+  underneath the caller, and every training script calls
+  `env.reset(relaunch=False)`. Nothing on this path recovers a search that dies
+  two hours in.
+- **It is not a dependency problem.** The base image already ships PyTorch, so the
+  residual network needs no extra layer. What is missing is process supervision, a
+  repeatable way back onto the grid after a restart, and checkpoint recovery --
+  a larger piece of work than the measurement path, and one that would produce a
+  *different* environment from the one the records were made in.
 
 ### Why the derived image is worth building
 
