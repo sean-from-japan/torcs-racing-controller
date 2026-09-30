@@ -30,9 +30,17 @@ Two consequences follow, and both cut against the number:
   107.140 / 108.206 s and one DNF. A repeat measurement of the same weights was never
   taken.
 
-The lap was also reported as reproduced by the evaluation runner and captured on video
-at the time. **No artefact in this repository records that reproduction** — only the
-training log, which is why the claim above is worded as it is.
+**The lap is also on video.** A screen recording from the time (`torcs-106.630.mp4`,
+108.5 s, SHA-256 `4ed0b9cd9a1cd18b55f4411600489c4d0ee93f8deb5c8814385272261c5a03e0`)
+covers one full lap of a 10-lap Quick Race. The TORCS on-screen timing board reads
+lap 1 at 1:53.80, lap 2 at 1:46.73 and lap 3 at 1:46.63, so the 106.630 s lap was
+driven next to a 106.73 s lap in the same race, not as a one-off. The three board
+readings are committed as
+[`results/stage5_video_hud.png`](../results/stage5_video_hud.png); the video itself is
+kept privately and is available on request. The recording was trimmed before it was
+saved, so it carries no capture date, and it cannot say on its own whether it shows the
+training evaluation or a later replay of the saved weights. It does not remove the
+selection bias above: it shows two fast laps, not a repeated measurement.
 
 Lap 1 is excluded throughout: it starts from rest, and the league did not count it.
 

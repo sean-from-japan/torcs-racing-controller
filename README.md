@@ -330,9 +330,11 @@ Best warm lap on Corkscrew, league-standard race setup:
 | + residual NN (ARS, 6 h) | 106.630 s | −59.2% |
 
 Every one of those was measured solo on an empty circuit — one car on the grid, damage
-off, in a 10-lap Quick Race on one Windows laptop. And 106.630 s is not a benchmark run:
-it is the best of the 72 evaluations the ARS loop made, so it carries the optimistic bias
-that a maximum over noisy draws always carries.
+off, in a 10-lap Quick Race on one Windows laptop. 106.630 s was selected as the best
+of the 72 evaluations the ARS loop made, so it carries the optimistic bias that a maximum
+over noisy draws always carries. A screen recording from the time shows it next to a
+106.73 s lap in the same race
+([timing board](results/stage5_video_hud.png)).
 [`docs/RACE_CONDITIONS.md`](docs/RACE_CONDITIONS.md) is the full setup — the race
 options, the host, the run procedure, and how the container run differs from it.
 
@@ -383,7 +385,8 @@ the pinned arm64 container on 2026-09-08. The container run produced warm laps o
 106.630 s, but 1.456 s faster than the same container's 108.538 s CMA-ES-only result.
 That makes the recovered controller portable and confirms that its residual correction
 improves the committed base in this environment. It does **not** reproduce the exact
-106.630 s, which remains one training evaluation under the original setup. The complete
+106.630 s, which remains a measurement of the original setup (training log plus a screen
+recording, see [`docs/RACE_CONDITIONS.md`](docs/RACE_CONDITIONS.md)). The complete
 record is [`stage5_nn_ars_container_2026-09-08.json`](results/stage5_nn_ars_container_2026-09-08.json).
 
 The weights are an output, not the method. Everything that produced them is here: the
@@ -514,7 +517,7 @@ league: I do not have access to the final standings and will not assert one.
   environment and has since raced both the CMA-ES and residual-NN stages on different
   hardware. The setup is not like-for-like with the original Windows Quick Race, and
   the residual run reached 107.082 s rather than 106.630 s, so the original record
-  remains a single training observation rather than a portable exact time. A container
+  remains a measurement of one setup rather than a portable exact time. A container
   from the start would have made that comparison much stronger.
 - **The trained weights were outside version control for four months.** `*.pt` was in
   `.gitignore`, so the one artefact that could not be regenerated cheaply was the one

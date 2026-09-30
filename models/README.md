@@ -86,8 +86,9 @@ Verified, here, today:
 
 **Not reproduced exactly: the lap time.** 106.630 s was measured on the original Windows
 machine in May 2026. The pinned-container best is 107.082 s, 0.452 s slower. The original
-number is also the best of the 72 evaluations the ARS loop made rather than a separate
-benchmark run, and it was measured solo on the grid with damage off.
+number is also the best of the 72 evaluations the ARS loop made, and it was measured
+solo on the grid with damage off. A screen recording from the time shows it next to a
+106.73 s lap in the same race.
 [`docs/RACE_CONDITIONS.md`](../docs/RACE_CONDITIONS.md) records that setup in full and
 says plainly what a maximum over noisy draws is worth. Publishing the weights removes
 the missing-artefact problem, and the container run makes the controller portable; it
