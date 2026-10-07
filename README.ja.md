@@ -6,6 +6,16 @@
 
 IBM AI Racing League のために作ったもので、参加校の一つで実施されたグループプロジェクト科目のクライアント課題です（2026年）。このリポジトリに入っているのは**私個人のエージェント**であって、チームが提出した統合版ではありません。詳しくは[担当範囲とチームの境界](#担当範囲とチームの境界)をご覧ください。大学名と科目コードは意図的に伏せています。確認に必要でしたら個別にご連絡ください。
 
+## 設計と開発の記録
+
+実装の判断と実験の経過は、Zennの記事でも説明しています。
+
+- [強化学習からCMA-ESへ切り替え、261秒から122秒まで改善した設計](https://zenn.dev/sean_from_japan/articles/torcs-racing-ai-cma-es)
+- [区間別制御と残差ネットワークで、122秒から106秒台へ](https://zenn.dev/sean_from_japan/articles/torcs-racing-ai-106s)
+- [自分の106秒と他チームの92秒の設計を比較する記事（計測条件は異なります）](https://zenn.dev/sean_from_japan/articles/torcs-racing-ai-92s-team)
+- [Granite 8BとOllamaによるコード生成を、テストで検収する仕組み](https://zenn.dev/sean_from_japan/articles/ibm-granite-8b-code-loop)
+- [チーム開発の採点対象となる要件定義・議事録・レビュー](https://zenn.dev/sean_from_japan/articles/torcs-racing-ai-team-process)
+
 ![最適化の段階ごとのラップタイム](figures/lap_time_progression.svg)
 
 制御則そのものは [`src/controller.py`](src/controller.py) に純粋な関数としてまとまっていて、シミュレータもPyTorchもNumPyも要りません。46件のテストは標準のPythonだけで1秒以内に終わります。

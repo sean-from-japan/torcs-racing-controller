@@ -12,6 +12,16 @@ individual agent**, not the team's integrated submission — see
 [Team boundary](#team-boundary). The university and the module code are left out
 on purpose; if you need them to verify this, ask me directly.
 
+## Design notes (Japanese)
+
+The implementation and experiments are explained in these articles on Zenn:
+
+- [Switching from reinforcement learning to CMA-ES: 261 s to 122 s](https://zenn.dev/sean_from_japan/articles/torcs-racing-ai-cma-es)
+- [Sector-specific control and a residual network: 122 s to 106 s](https://zenn.dev/sean_from_japan/articles/torcs-racing-ai-106s)
+- [Comparing my 106 s controller with another team's 92 s design, under different measurement conditions](https://zenn.dev/sean_from_japan/articles/torcs-racing-ai-92s-team)
+- [Generating code with Granite 8B and Ollama, then checking it with tests](https://zenn.dev/sean_from_japan/articles/ibm-granite-8b-code-loop)
+- [How the team project was assessed: requirements, meeting minutes and reviews](https://zenn.dev/sean_from_japan/articles/torcs-racing-ai-team-process)
+
 ![Lap time by optimisation stage](figures/lap_time_progression.svg)
 
 ```
